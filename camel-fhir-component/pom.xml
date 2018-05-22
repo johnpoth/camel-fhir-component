@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel.component.fhir</groupId>
+    <artifactId>camel-fhir-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-fhir</artifactId>
+  <packaging>jar</packaging>
+  <name>Camel fhir Component</name>
+  <description>Camel Component for fhir</description>
+
+  <properties>
+    <schemeName>fhir</schemeName>
+    <componentName>Fhir</componentName>
+    <componentPackage>org.apache.camel.component.fhir</componentPackage>
+    <outPackage>org.apache.camel.component.fhir.internal</outPackage>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ca.uhn.hapi.fhir</groupId>
+      <artifactId>hapi-fhir-base</artifactId>
+      <version>${hapi-fhir-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ca.uhn.hapi.fhir</groupId>
+      <artifactId>hapi-fhir-client</artifactId>
+      <version>${hapi-fhir-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ca.uhn.hapi.fhir</groupId>
+      <artifactId>hapi-fhir-client</artifactId>
+      <version>${hapi-fhir-version}</version>
+      <scope>provided</scope>
+      <classifier>javadoc</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.component.fhir</groupId>
+      <artifactId>camel-fhir-api</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <!-- support camel documentation -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>apt</artifactId>
+    </dependency>
+
+    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>spi-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Component API javadoc in provided scope to read API signatures -->
+    <dependency>
+      <groupId>org.apache.camel.component.fhir</groupId>
+      <artifactId>camel-fhir-api</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>javadoc</classifier>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- logging -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-hl7</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ca.uhn.hapi</groupId>
+      <artifactId>hapi-structures-v24</artifactId>
+      <version>2.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ca.uhn.hapi.fhir</groupId>
+      <artifactId>hapi-fhir-structures-dstu3</artifactId>
+      <version>${hapi-fhir-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ca.uhn.hapi.fhir</groupId>
+      <artifactId>hapi-fhir-structures-dstu2</artifactId>
+      <version>${hapi-fhir-version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+
+    <plugins>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.2</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>3.5.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
+            <Bundle-SymbolicName>org.apache.camel.component.fhir.camel-fhir</Bundle-SymbolicName>
+            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
+            <Export-Package>${componentPackage};version=${project.version}</Export-Package>
+            <Import-Package>
+              ${componentPackage}.api;version=${project.version},
+              ${componentPackage};version=${project.version},
+              org.apache.camel.*;version=${camelVersion}
+            </Import-Package>
+            <Private-Package>${outPackage}</Private-Package>
+            <Implementation-Title>Apache Camel</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
+            <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
+            <_failok>false</_failok>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <!-- generate Component source and test source -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-api-component-maven-plugin</artifactId>
+        <version>2.22.0-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>generate-test-component-classes</id>
+            <goals>
+              <goal>fromApis</goal>
+            </goals>
+            <configuration>
+              <apis>
+                <api>
+                  <apiName>capabilities</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirCapabilities</proxyClass>
+                  <fromSignatureFile>signatures/capabilities-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>create</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirCreate</proxyClass>
+                  <fromSignatureFile>signatures/create-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>delete</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirDelete</proxyClass>
+                  <fromSignatureFile>signatures/delete-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>history</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirHistory</proxyClass>
+                  <fromSignatureFile>signatures/history-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>count</nullableOption>
+                    <nullableOption>theCutoff</nullableOption>
+                    <nullableOption>cutoff</nullableOption>
+                  </nullableOptions>
+                </api>
+                <api>
+                  <apiName>load-page</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirLoadPage</proxyClass>
+                  <fromSignatureFile>signatures/load-page-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>meta</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirMeta</proxyClass>
+                  <fromSignatureFile>signatures/meta-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>operation</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirOperation</proxyClass>
+                  <fromSignatureFile>signatures/operation-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>patch</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirPatch</proxyClass>
+                  <fromSignatureFile>signatures/patch-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>read</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirRead</proxyClass>
+                  <fromSignatureFile>signatures/read-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>search</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirSearch</proxyClass>
+                  <fromSignatureFile>signatures/search-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>transaction</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirTransaction</proxyClass>
+                  <fromSignatureFile>signatures/transaction-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>update</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirUpdate</proxyClass>
+                  <fromSignatureFile>signatures/update-sig-api.txt</fromSignatureFile>
+                </api>
+                <api>
+                  <apiName>validate</apiName>
+                  <proxyClass>org.apache.camel.component.fhir.api.FhirValidate</proxyClass>
+                  <fromSignatureFile>signatures/validate-sig-api.txt</fromSignatureFile>
+                </api>
+              </apis>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- generate components meta-data and validate component includes documentation etc -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${camelVersion}</version>
+        <executions>
+          <execution>
+            <id>prepare</id>
+            <goals>
+              <goal>prepare-components</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>validate</id>
+            <goals>
+              <goal>validate-components</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- add generated source and test source to build -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.10</version>
+        <executions>
+          <execution>
+            <id>add-generated-sources</id>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/camel-component</source>
+              </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-generated-test-sources</id>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-test-sources/camel-component</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-api-component-maven-plugin</artifactId>
+          <version>${camelVersion}</version>
+          <configuration>
+            <scheme>${schemeName}</scheme>
+            <componentName>${componentName}</componentName>
+            <componentPackage>${componentPackage}</componentPackage>
+            <outPackage>${outPackage}</outPackage>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-api-component-maven-plugin</artifactId>
+        <version>${camelVersion}</version>
+        <configuration>
+          <scheme>${schemeName}</scheme>
+          <componentName>${componentName}</componentName>
+          <componentPackage>${componentPackage}</componentPackage>
+          <outPackage>${outPackage}</outPackage>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+</project>
