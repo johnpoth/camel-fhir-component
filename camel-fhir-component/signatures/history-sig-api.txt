@@ -15,3 +15,5 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 <T extends org.hl7.fhir.instance.model.api.IBaseBundle> T onServer(Class<T> theType, Integer count, java.util.Date theCutoff, org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> cutoff);
+<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T onType(Class<org.hl7.fhir.instance.model.api.IBaseResource> theResourceType, Class<T> theType, Integer count, java.util.Date theCutoff, org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> cutoff);
+<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T onInstance(org.hl7.fhir.instance.model.api.IIdType theId, Class<T> theType, Integer count, java.util.Date theCutoff, org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> cutoff);

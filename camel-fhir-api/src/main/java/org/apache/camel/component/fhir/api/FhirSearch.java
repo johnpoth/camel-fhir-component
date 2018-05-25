@@ -14,8 +14,6 @@ public class FhirSearch {
         this.client = client;
     }
 
-    // TODO add IClientExecutable options
-    // TODO find out if we need to implement IQuery options
     public IBaseBundle searchByUrl(String url) {
         return client.search().byUrl(url).execute();
     }

@@ -15,3 +15,5 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 <T extends org.hl7.fhir.instance.model.api.IBaseBundle> T next(T theBundle);
+<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T previous(T theBundle);
+<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T byUrl(String thePageUrl, Class<T> theBundleType);

@@ -5,7 +5,8 @@ import org.hl7.fhir.instance.model.api.IBaseMetaType;
 import org.hl7.fhir.instance.model.api.IIdType;
 
 /**
- * Sample API used by fhir Component whose method signatures are read from File.
+ * API for the "meta" operations, which can be used to get, add and remove tags and other
+ * Meta elements from a resource or across the server.
  */
 public class FhirMeta {
 
@@ -15,30 +16,40 @@ public class FhirMeta {
         this.client = client;
     }
 
+    /**
+     * Fetch the current metadata from the whole Server
+     *
+     * @param theMetaType The type of the meta datatype for the given FHIR model version (should be <code>MetaDt.class</code> or <code>MetaType.class</code>)
+     */
     public <T extends IBaseMetaType> T getFromServer(Class<T> theMetaType) {
         return client.meta().get(theMetaType).fromServer().execute();
     }
 
+    /**
+     * Fetch the current metadata from a specific resource
+     */
     public <T extends IBaseMetaType> T getFromResource(Class<T> theMetaType, IIdType theId) {
         return client.meta().get(theMetaType).fromResource(theId).execute();
     }
 
+    /**
+     * Fetch the current metadata from a specific type
+     */
+    public <T extends IBaseMetaType> T getFromType(Class<T> theMetaType, String theResourceName) {
+        return client.meta().get(theMetaType).fromType(theResourceName).execute();
+    }
 
-//    /**
-//     * Fetch the current metadata
-//     *
-//     * @param theMetaType The type of the meta datatype for the given FHIR model version (should be <code>MetaDt.class</code> or <code>MetaType.class</code>)
-//     */
-//    <T extends IBaseMetaType> IMetaGetUnsourced<T> get(Class<T> theMetaType);
-//
-//    /**
-//     * Add the elements in the given metadata to the already existing set (do not remove any)
-//     */
-//    IMetaAddOrDeleteUnsourced add();
-//
-//    /**
-//     * Delete the elements in the given metadata to the
-//     */
-//    IMetaAddOrDeleteUnsourced delete();
+    /**
+     * Add the elements in the given metadata to the already existing set (do not remove any)
+     */
+    public <T extends IBaseMetaType> T add(T theMeta, IIdType theId) {
+        return client.meta().add().onResource(theId).meta(theMeta).execute();
+    }
 
+    /**
+     * Delete the elements in the given metadata from the given id
+     */
+    public <T extends IBaseMetaType> T delete(T theMeta, IIdType theId) {
+        return client.meta().delete().onResource(theId).meta(theMeta).execute();
+    }
 }

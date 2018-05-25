@@ -18,7 +18,7 @@ public class FhirTransaction {
     /**
      * Use a list of resources as the transaction input
      */
-    public List<IBaseResource> withResources(List<? extends IBaseResource> theResource) {
+    public List<IBaseResource> withResources(List<IBaseResource> theResource) {
         return client.transaction().withResources(theResource).execute();
     }
 

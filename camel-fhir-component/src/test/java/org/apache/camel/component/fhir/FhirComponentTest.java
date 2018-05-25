@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import ca.uhn.fhir.model.dstu2.resource.Conformance;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.apache.camel.builder.RouteBuilder;
 import org.hl7.fhir.dstu3.model.Bundle;
@@ -33,37 +32,11 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
    private String id;
 
    @Before
-   public void assertPatientExists() {
+   public void cleanFhirServerState() {
       if (patientExists()) {
          deletePatient();
       }
       createPatient();
-   }
-
-   private void createPatient() {
-      Patient vincentFreeman = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
-      Map<String, Object> headers;
-      headers = new HashMap<>();
-      headers.put("CamelFhir.theResource", vincentFreeman);
-      MethodOutcome outcome = requestBodyAndHeaders("direct://create", null, headers);
-      assertTrue(outcome.getCreated());
-      this.id = outcome.getId().getIdPart();
-   }
-
-   private void deletePatient() {
-      Map<String, Object> headers;
-      headers = new HashMap<>();
-      headers.put("CamelFhir.theSearchUrl", "Patient?given=Vincent&family=Freeman");
-      requestBodyAndHeaders("direct://delete", null, headers);
-      assertFalse(patientExists());
-   }
-
-   private boolean patientExists() {
-      final String url = "Patient?given=Vincent&family=Freeman&_format=json";
-      Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.url", url);
-      Bundle bundle = requestBodyAndHeaders("direct://search", null, headers);
-      return !bundle.getEntry().isEmpty();
    }
 
    @Test
@@ -76,9 +49,7 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
    @Test
    public void testSearch() {
       final String url = "Patient?given=Vincent&family=Freeman&_format=json";
-      Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.url", url);
-      Bundle bundle = requestBodyAndHeaders("direct://search", null, headers);
+      Bundle bundle = requestBody("direct://search", url);
       Patient patient = (Patient) bundle.getEntry().get(0).getResource();
       assertNotNull(patient);
       assertEquals("Freeman", patient.getName().get(0).getFamily());
@@ -87,10 +58,7 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
 
    @Test
    public void testDelete() {
-      Map<String, Object> headers;
-      headers = new HashMap<>();
-      headers.put("CamelFhir.theSearchUrl", "Patient?given=Vincent&family=Freeman");
-      requestBodyAndHeaders("direct://delete", null, headers);
+      requestBody("direct://delete", "Patient?given=Vincent&family=Freeman");
       assertFalse(patientExists());
    }
 
@@ -112,9 +80,8 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
    public void testPatch() {
       String patch = "[ { \"op\":\"replace\", \"path\":\"/active\", \"value\":true } ]";
       Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.thePatchBody", patch);
-      headers.put("CamelFhir.theSearchUrl", "Patient?given=Vincent&family=Freeman");
-      requestBodyAndHeaders("direct://patch", null, headers);
+      headers.put("CamelFhir.url", "Patient?given=Vincent&family=Freeman");
+      requestBodyAndHeaders("direct://patch", patch, headers);
       Patient patient = getPatient(this.id);
       assertTrue(patient.getActive());
    }
@@ -156,12 +123,10 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
 
    @Test
    public void testLoadPage() {
-      final String url = "Patient";
-      Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.url", url);
-      Bundle bundle = requestBodyAndHeaders("direct://search", null, headers);
+      final String url = "Patient?";
+      Bundle bundle = requestBody("direct://search", url);
       assertNotNull(bundle.getLink(Bundle.LINK_NEXT));
-      headers = new HashMap<>();
+      Map<String, Object> headers = new HashMap<>();
       headers.put("CamelFhir.theBundle", bundle);
       bundle = requestBodyAndHeaders("direct://load-page", null, headers);
       assertNotNull(bundle);
@@ -199,6 +164,24 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
       CapabilityStatement resp = requestBodyAndHeaders("direct://capabilities", null, headers);
       assertNotNull(resp);
       assertEquals(Enumerations.PublicationStatus.ACTIVE, resp.getStatus());
+   }
+
+   private void createPatient() {
+      Patient vincentFreeman = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
+      MethodOutcome outcome = requestBody("direct://create", vincentFreeman);
+      assertTrue(outcome.getCreated());
+      this.id = outcome.getId().getIdPart();
+   }
+
+   private void deletePatient() {
+      sendBody("direct://delete", "Patient?given=Vincent&family=Freeman");
+      assertFalse(patientExists());
+   }
+
+   private boolean patientExists() {
+      String url = "Patient?given=Vincent&family=Freeman&_format=json";
+      Bundle bundle = requestBody("direct://search", url);
+      return !bundle.getEntry().isEmpty();
    }
 
    private Bundle getMessageBundle(String eventCode, String eventDisplay, String sourceName, String sourceEnpoint, String destinationName, String destinationEndpoint) {
@@ -241,11 +224,11 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
          public void configure() {
             // test routes for read
             from("direct://read").to("fhir://read/resource");
-            from("direct://search").to("fhir://search/searchByUrl");
-            from("direct://delete").to("fhir://delete/resourceConditionalByUrl");
-            from("direct://create").to("fhir://create/resource");
+            from("direct://search").to("fhir://search/searchByUrl?inBody=url");
+            from("direct://delete").to("fhir://delete/resourceConditionalByUrl?inBody=theSearchUrl");
+            from("direct://create").to("fhir://create/resource?inBody=resource");
             from("direct://update").to("fhir://update/resource");
-            from("direct://patch").to("fhir://patch/withBodyByUrl");
+            from("direct://patch").to("fhir://patch/patchByUrl?inBody=patchBody");
             from("direct://transaction").to("fhir://transaction/withResources");
             from("direct://validate").to("fhir://validate/resource");
             from("direct://history").to("fhir://history/onServer");
@@ -253,7 +236,6 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
             from("direct://meta").to("fhir://meta/getFromResource");
             from("direct://operation").to("fhir://operation/messageBundle");
             from("direct://capabilities").to("fhir://capabilities/ofType");
-
          }
       };
    }

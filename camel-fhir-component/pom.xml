@@ -198,6 +198,10 @@
                   <apiName>create</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirCreate</proxyClass>
                   <fromSignatureFile>signatures/create-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>theSearchUrl</nullableOption>
+                    <nullableOption>theReturn</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>delete</apiName>
@@ -233,6 +237,9 @@
                   <apiName>patch</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirPatch</proxyClass>
                   <fromSignatureFile>signatures/patch-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>preferReturnEnum</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>read</apiName>
