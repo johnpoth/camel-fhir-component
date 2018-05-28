@@ -22,16 +22,16 @@ public class FhirHistory {
     /**
  	 * Perform the operation across all versions of all resources of all types on the server
      *
-     * @param theType Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle</code>).
+     * @param returnType Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle</code>).
      *                Use this method if you are accessing a DSTU2+ server.
      * @param count Request that the server return only up to <code>theCount</code> number of resources, may be NULL
-     * @param theCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @param cutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
+     * @param iCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @return the {@link IBaseBundle}
      */
-    public <T extends IBaseBundle> T onServer(Class<T> theType, Integer count, Date theCutoff, IPrimitiveType<Date> cutoff) {
-        IHistoryTyped<T> tiHistoryTyped = client.history().onServer().andReturnBundle(theType);
-        tiHistoryTyped = processOptionalParams(count, theCutoff, cutoff, tiHistoryTyped);
+    public <T extends IBaseBundle> T onServer(Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff) {
+        IHistoryTyped<T> tiHistoryTyped = client.history().onServer().andReturnBundle(returnType);
+        tiHistoryTyped = processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
         return tiHistoryTyped.execute();
     }
 
@@ -39,16 +39,16 @@ public class FhirHistory {
 	 * Perform the operation across all versions of all resources of the given type on the server
      *
      * @param theResourceType The resource type to search for
-     * @param theType Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle</code>).
+     * @param returnType Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle</code>).
      *                Use this method if you are accessing a DSTU2+ server.
      * @param count Request that the server return only up to <code>theCount</code> number of resources, may be NULL
-     * @param theCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @param cutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
+     * @param iCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @return the {@link IBaseBundle}
      */
-    public <T extends IBaseBundle> T onType(Class<IBaseResource> theResourceType, Class<T> theType, Integer count, Date theCutoff, IPrimitiveType<Date> cutoff) {
-        IHistoryTyped<T> tiHistoryTyped = client.history().onType(theResourceType).andReturnBundle(theType);
-        tiHistoryTyped = processOptionalParams(count, theCutoff, cutoff, tiHistoryTyped);
+    public <T extends IBaseBundle> T onType(Class<IBaseResource> theResourceType, Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff) {
+        IHistoryTyped<T> tiHistoryTyped = client.history().onType(theResourceType).andReturnBundle(returnType);
+        tiHistoryTyped = processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
         return tiHistoryTyped.execute();
     }
 
@@ -56,18 +56,18 @@ public class FhirHistory {
      * Perform the operation across all versions of a specific resource (by ID and type) on the server.
      * Note that <code>theId</code> must be populated with both a resource type and a resource ID at
      * a minimum.
-     * @param theId the {@link IIdType} which must be populated with both a resource type and a resource ID at
-     * @param theType Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle</code>).
+     * @param id the {@link IIdType} which must be populated with both a resource type and a resource ID at
+     * @param returnType Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle</code>).
      *                Use this method if you are accessing a DSTU2+ server.
      * @param count Request that the server return only up to <code>theCount</code> number of resources, may be NULL
-     * @param theCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @param cutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
+     * @param iCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @throws IllegalArgumentException If <code>theId</code> does not contain at least a resource type and ID
      * @return the {@link IBaseBundle}
      */
-    public <T extends IBaseBundle> T onInstance(IIdType theId, Class<T> theType, Integer count, Date theCutoff, IPrimitiveType<Date> cutoff) {
-        IHistoryTyped<T> tiHistoryTyped = client.history().onInstance(theId).andReturnBundle(theType);
-        tiHistoryTyped = processOptionalParams(count, theCutoff, cutoff, tiHistoryTyped);
+    public <T extends IBaseBundle> T onInstance(IIdType id, Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff) {
+        IHistoryTyped<T> tiHistoryTyped = client.history().onInstance(id).andReturnBundle(returnType);
+        tiHistoryTyped = processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
         return tiHistoryTyped.execute();
     }
 

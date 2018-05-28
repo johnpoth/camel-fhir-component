@@ -5,7 +5,7 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
 /**
- * Sample API used by fhir Component whose method signatures are read from File.
+ * API for validating resources
  */
 public class FhirValidate {
 
@@ -15,9 +15,11 @@ public class FhirValidate {
         this.client = client;
     }
 
-    public MethodOutcome resource(IBaseResource theResource) {
-        return client.validate().resource(theResource).execute();
+    public MethodOutcome resource(IBaseResource resource) {
+        return client.validate().resource(resource).execute();
     }
 
-
+    public MethodOutcome resource(String sResource) {
+        return client.validate().resource(sResource).execute();
+    }
 }

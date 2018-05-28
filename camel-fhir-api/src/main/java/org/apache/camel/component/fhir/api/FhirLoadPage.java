@@ -18,23 +18,23 @@ public class FhirLoadPage {
      * Load the next page of results using the link with relation "next" in the bundle. This
      * method accepts a DSTU2 Bundle resource
      */
-    public <T extends IBaseBundle> T next(T theBundle) {
-        return client.loadPage().next(theBundle).execute();
+    public <T extends IBaseBundle> T next(T bundle) {
+        return client.loadPage().next(bundle).execute();
     }
 
     /**
      * Load the previous page of results using the link with relation "prev" in the bundle. This
      * method accepts a DSTU2+ Bundle resource
      */
-    public <T extends IBaseBundle> T previous(T theBundle) {
-        return client.loadPage().previous(theBundle).execute();
+    public <T extends IBaseBundle> T previous(T bundle) {
+        return client.loadPage().previous(bundle).execute();
     }
 
     /**
      * Load a page of results using the given URL and bundle type and return a DSTU1 Atom bundle
      */
-    public <T extends IBaseBundle> T byUrl(String thePageUrl, Class<T> theBundleType) {
-        return client.loadPage().byUrl(thePageUrl).andReturnBundle(theBundleType).execute();
+    public <T extends IBaseBundle> T byUrl(String url, Class<T> returnType) {
+        return client.loadPage().byUrl(url).andReturnBundle(returnType).execute();
     }
 
 

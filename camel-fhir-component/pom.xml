@@ -199,8 +199,8 @@
                   <proxyClass>org.apache.camel.component.fhir.api.FhirCreate</proxyClass>
                   <fromSignatureFile>signatures/create-sig-api.txt</fromSignatureFile>
                   <nullableOptions>
-                    <nullableOption>theSearchUrl</nullableOption>
-                    <nullableOption>theReturn</nullableOption>
+                    <nullableOption>url</nullableOption>
+                    <nullableOption>preferReturn</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
@@ -214,8 +214,8 @@
                   <fromSignatureFile>signatures/history-sig-api.txt</fromSignatureFile>
                   <nullableOptions>
                     <nullableOption>count</nullableOption>
-                    <nullableOption>theCutoff</nullableOption>
                     <nullableOption>cutoff</nullableOption>
+                    <nullableOption>iCutoff</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
@@ -238,13 +238,19 @@
                   <proxyClass>org.apache.camel.component.fhir.api.FhirPatch</proxyClass>
                   <fromSignatureFile>signatures/patch-sig-api.txt</fromSignatureFile>
                   <nullableOptions>
-                    <nullableOption>preferReturnEnum</nullableOption>
+                    <nullableOption>preferReturn</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
                   <apiName>read</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirRead</proxyClass>
                   <fromSignatureFile>signatures/read-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>ifVersionMatches</nullableOption>
+                    <nullableOption>returnNull</nullableOption>
+                    <nullableOption>returnResource</nullableOption>
+                    <nullableOption>throwError</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>search</apiName>
@@ -260,6 +266,12 @@
                   <apiName>update</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirUpdate</proxyClass>
                   <fromSignatureFile>signatures/update-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>id</nullableOption>
+                    <nullableOption>sId</nullableOption>
+                    <nullableOption>url</nullableOption>
+                    <nullableOption>preferReturn</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>validate</apiName>

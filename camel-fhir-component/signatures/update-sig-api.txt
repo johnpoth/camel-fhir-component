@@ -14,4 +14,6 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-ca.uhn.fhir.rest.api.MethodOutcome resource(org.hl7.fhir.instance.model.api.IBaseResource theResource);
+ca.uhn.fhir.rest.api.MethodOutcome resource(org.hl7.fhir.instance.model.api.IBaseResource resource, org.hl7.fhir.instance.model.api.IIdType id, String sId, String url, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn);
+ca.uhn.fhir.rest.api.MethodOutcome resource(String sResource, org.hl7.fhir.instance.model.api.IIdType id, String sId, String url, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn);
+

@@ -15,7 +15,7 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 
-org.hl7.fhir.instance.model.api.IBaseOperationOutcome resource(org.hl7.fhir.instance.model.api.IBaseResource theResource);
-org.hl7.fhir.instance.model.api.IBaseOperationOutcome resourceById(org.hl7.fhir.instance.model.api.IIdType resourceId);
-org.hl7.fhir.instance.model.api.IBaseOperationOutcome resourceConditionalByUrl(String theSearchUrl);
-org.hl7.fhir.instance.model.api.IBaseOperationOutcome resourceById(String theResourceType, String theLogicalId);
+org.hl7.fhir.instance.model.api.IBaseOperationOutcome resource(org.hl7.fhir.instance.model.api.IBaseResource resource);
+org.hl7.fhir.instance.model.api.IBaseOperationOutcome resourceById(org.hl7.fhir.instance.model.api.IIdType id);
+org.hl7.fhir.instance.model.api.IBaseOperationOutcome resourceConditionalByUrl(String url);
+org.hl7.fhir.instance.model.api.IBaseOperationOutcome resourceById(String type, String sId);

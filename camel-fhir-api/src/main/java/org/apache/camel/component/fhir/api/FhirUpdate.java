@@ -1,6 +1,7 @@
 package org.apache.camel.component.fhir.api;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.PreferReturnEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IUpdateExecutable;
 import ca.uhn.fhir.rest.gclient.IUpdateTyped;
@@ -8,7 +9,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
 /**
- * Sample API used by fhir Component whose method signatures are read from File.
+ * API for the "update" operation, which performs a logical delete on a server resource
  */
 public class FhirUpdate {
 
@@ -18,23 +19,35 @@ public class FhirUpdate {
         this.client = client;
     }
 
-    public MethodOutcome resource(IBaseResource theResource){
-        return client.update().resource(theResource).execute();
+    public MethodOutcome resource(IBaseResource resource, IIdType id, String sId, String url, PreferReturnEnum preferReturn){
+        IUpdateTyped updateTyped = client.update().resource(resource);
+        return processOptionalParams(id, sId, url, preferReturn, updateTyped);
     }
 
-//    IUpdateExecutable withId(IIdType theId);
-//
-//    IUpdateExecutable withId(String theId);
-//
-//    /**
-//     * Specifies that the update should be performed as a conditional create
-//     * against a given search URL.
-//     *
-//     * @param theSearchUrl The search URL to use. The format of this URL should be of the form <code>[ResourceType]?[Parameters]</code>,
-//     *                     for example: <code>Patient?name=Smith&amp;identifier=13.2.4.11.4%7C847366</code>
-//     * @since HAPI 0.9 / FHIR DSTU 2
-//     */
-//    IUpdateTyped conditionalByUrl(String theSearchUrl);
+    public MethodOutcome resource(String sResource, IIdType id, String sId, String url, PreferReturnEnum preferReturn){
+        IUpdateTyped updateTyped = client.update().resource(sResource);
+        return processOptionalParams(id, sId, url, preferReturn, updateTyped);
+    }
 
-
+    private MethodOutcome processOptionalParams(IIdType id, String sId, String url, PreferReturnEnum preferReturn, IUpdateTyped updateTyped) {
+        if(url != null) {
+            updateTyped = updateTyped.conditionalByUrl(url);
+            if (preferReturn != null) {
+                return updateTyped.prefer(preferReturn).execute();
+            }
+        }
+        else if (id != null) {
+            IUpdateExecutable updateExecutable = updateTyped.withId(id);
+            if (preferReturn != null) {
+               return updateExecutable.prefer(preferReturn).execute();
+            }
+        }
+        else if (sId !=null){
+            IUpdateExecutable updateExecutable = updateTyped.withId(id);
+            if (preferReturn != null) {
+                return updateExecutable.prefer(preferReturn).execute();
+            }
+        }
+        return updateTyped.execute();
+    }
 }

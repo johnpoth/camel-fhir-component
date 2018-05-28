@@ -25,16 +25,16 @@ public class FhirPatch {
      *                     for example: <code>Patient?name=Smith&amp;identifier=13.2.4.11.4%7C847366</code>
      * @param patchBody The body of the patch document serialized in either XML or JSON which conforms to
      *                     http://jsonpatch.com/ or http://tools.ietf.org/html/rfc5261
-     * @param preferReturnEnum Add a <code>Prefer</code> header to the request, which requests that the server include
+     * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                         or suppress the resource body as a part of the result. If a resource is returned by the server
      *                         it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}
      *
      * @return
      */
-    public MethodOutcome patchByUrl(String patchBody, String url, PreferReturnEnum preferReturnEnum) {
+    public MethodOutcome patchByUrl(String patchBody, String url, PreferReturnEnum preferReturn) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).conditionalByUrl(url);
-        if (preferReturnEnum != null) {
-            patchExecutable = patchExecutable.prefer(preferReturnEnum);
+        if (preferReturn != null) {
+            patchExecutable = patchExecutable.prefer(preferReturn);
         }
         return patchExecutable.execute();
     }
@@ -45,15 +45,15 @@ public class FhirPatch {
      * @param patchBody The body of the patch document serialized in either XML or JSON which conforms to
      *                     http://jsonpatch.com/ or http://tools.ietf.org/html/rfc5261
      * @param iId The resource ID to patch
-     * @param preferReturnEnum Add a <code>Prefer</code> header to the request, which requests that the server include
+     * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                         or suppress the resource body as a part of the result. If a resource is returned by the server
      *                         it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}
      * @return
      */
-    public MethodOutcome patchById(String patchBody, IIdType iId, PreferReturnEnum preferReturnEnum) {
+    public MethodOutcome patchById(String patchBody, IIdType iId, PreferReturnEnum preferReturn) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).withId(iId);
-        if (preferReturnEnum != null) {
-            patchExecutable = patchExecutable.prefer(preferReturnEnum);
+        if (preferReturn != null) {
+            patchExecutable = patchExecutable.prefer(preferReturn);
         }
         return patchExecutable.execute();
     }
@@ -64,15 +64,15 @@ public class FhirPatch {
      * @param patchBody The body of the patch document serialized in either XML or JSON which conforms to
      *                     http://jsonpatch.com/ or http://tools.ietf.org/html/rfc5261
      * @param sId The resource ID to patch
-     * @param preferReturnEnum Add a <code>Prefer</code> header to the request, which requests that the server include
+     * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                         or suppress the resource body as a part of the result. If a resource is returned by the server
      *                         it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}
      * @return
      */
-    public MethodOutcome patchBySId(String patchBody, String sId, PreferReturnEnum preferReturnEnum) {
+    public MethodOutcome patchBySId(String patchBody, String sId, PreferReturnEnum preferReturn) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).withId(sId);
-        if (preferReturnEnum != null) {
-            patchExecutable = patchExecutable.prefer(preferReturnEnum);
+        if (preferReturn != null) {
+            patchExecutable = patchExecutable.prefer(preferReturn);
         }
         return patchExecutable.execute();
     }

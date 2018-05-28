@@ -65,12 +65,9 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
    @Test
    public void testUpdate() throws ParseException {
       Patient patient = getPatient(this.id);
-      Map<String, Object> headers;
       Date date = new SimpleDateFormat("yyyy-MM-dd").parse("1998-04-29");
       patient.setBirthDate(date);
-      headers = new HashMap<>();
-      headers.put("CamelFhir.theResource", patient);
-      requestBodyAndHeaders("direct://update", null, headers);
+      requestBody("direct://update", patient);
       patient = getPatient(this.id);
       assertEquals(date, patient.getBirthDate());
    }
@@ -93,9 +90,7 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
       List<IBaseResource> patients = new ArrayList<>(2);
       patients.add(oscar);
       patients.add(bobbyHebb);
-      Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.theResource", patients);
-      List<IBaseResource> resources = requestBodyAndHeaders("direct://transaction", null, headers);
+      List<IBaseResource> resources = requestBody("direct://transaction", patients);
       assertTrue(resources.size() == 2 );
       resources.forEach( (resource) -> getPatient(resource.getIdElement().getIdPart()));
    }
@@ -104,9 +99,7 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
    @Test
    public void testValidation() {
       Patient bobbyHebb      = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
-      Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.theResource", bobbyHebb);
-      MethodOutcome outcome = requestBodyAndHeaders("direct://validate", null, headers);
+      MethodOutcome outcome = requestBody("direct://validate", bobbyHebb);
       assertNotNull(outcome.getOperationOutcome());
       assertTrue(((OperationOutcome) outcome.getOperationOutcome()).getText().getDivAsString().contains("No issues detected during validation"));
    }
@@ -114,7 +107,7 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
    @Test
    public void testHistory() {
       Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.theType", Bundle.class);
+      headers.put("CamelFhir.returnType", Bundle.class);
       headers.put("CamelFhir.count", 1);
       Bundle bundle= requestBodyAndHeaders("direct://history", null, headers);
       assertNotNull(bundle);
@@ -126,17 +119,15 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
       final String url = "Patient?";
       Bundle bundle = requestBody("direct://search", url);
       assertNotNull(bundle.getLink(Bundle.LINK_NEXT));
-      Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.theBundle", bundle);
-      bundle = requestBodyAndHeaders("direct://load-page", null, headers);
+      bundle = requestBody("direct://load-page", bundle);
       assertNotNull(bundle);
    }
 
    @Test
    public void testMeta() {
       Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.theMetaType", Meta.class);
-      headers.put("CamelFhir.theId", new IdType("Patient", this.id));
+      headers.put("CamelFhir.metaType", Meta.class);
+      headers.put("CamelFhir.id", new IdType("Patient", this.id));
       Meta meta = requestBodyAndHeaders("direct://meta", null, headers);
       assertEquals(0, meta.getTag().size());
    }
@@ -160,7 +151,7 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
    @Test
    public void testCapabilities() {
       Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.theType", CapabilityStatement.class);
+      headers.put("CamelFhir.type", CapabilityStatement.class);
       CapabilityStatement resp = requestBodyAndHeaders("direct://capabilities", null, headers);
       assertNotNull(resp);
       assertEquals(Enumerations.PublicationStatus.ACTIVE, resp.getStatus());
@@ -213,8 +204,8 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
 
    private Patient getPatient(String id) {
       Map<String, Object> headers = new HashMap<>();
-      headers.put("CamelFhir.resourceType", Patient.class);
-      headers.put("CamelFhir.sid", id);
+      headers.put("CamelFhir.resource", Patient.class);
+      headers.put("CamelFhir.id", id);
       return requestBodyAndHeaders("direct://read", null, headers);
    }
 
@@ -223,16 +214,16 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
       return new RouteBuilder() {
          public void configure() {
             // test routes for read
-            from("direct://read").to("fhir://read/resource");
+            from("direct://read").to("fhir://read/resourceWithId");
             from("direct://search").to("fhir://search/searchByUrl?inBody=url");
-            from("direct://delete").to("fhir://delete/resourceConditionalByUrl?inBody=theSearchUrl");
+            from("direct://delete").to("fhir://delete/resourceConditionalByUrl?inBody=url");
             from("direct://create").to("fhir://create/resource?inBody=resource");
-            from("direct://update").to("fhir://update/resource");
+            from("direct://update").to("fhir://update/resource?inBody=resource");
             from("direct://patch").to("fhir://patch/patchByUrl?inBody=patchBody");
-            from("direct://transaction").to("fhir://transaction/withResources");
-            from("direct://validate").to("fhir://validate/resource");
+            from("direct://transaction").to("fhir://transaction/withResources?inBody=resources");
+            from("direct://validate").to("fhir://validate/resource?inBody=resource");
             from("direct://history").to("fhir://history/onServer");
-            from("direct://load-page").to("fhir://load-page/next");
+            from("direct://load-page").to("fhir://load-page/next?inBody=bundle");
             from("direct://meta").to("fhir://meta/getFromResource");
             from("direct://operation").to("fhir://operation/messageBundle");
             from("direct://capabilities").to("fhir://capabilities/ofType");

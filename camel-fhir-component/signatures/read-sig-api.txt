@@ -14,9 +14,15 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-<T extends org.hl7.fhir.instance.model.api.IBaseResource> T resource(Class<T> resourceType, String sid);
-<T extends org.hl7.fhir.instance.model.api.IBaseResource> T resource(Class<T> resourceType, String sid, String theVersion);
-<T extends org.hl7.fhir.instance.model.api.IBaseResource> T resource(Class<T> resourceType, Long lid);
-<T extends org.hl7.fhir.instance.model.api.IBaseResource> T resource(Class<T> resourceType, org.hl7.fhir.instance.model.api.IIdType id);
-<T extends org.hl7.fhir.instance.model.api.IBaseResource> T resourceUrl(Class<T> resourceType, org.hl7.fhir.instance.model.api.IIdType surl);
-<T extends org.hl7.fhir.instance.model.api.IBaseResource> T resourceUrl(Class<T> resourceType, String url);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithId(Class<org.hl7.fhir.instance.model.api.IBaseResource> resource, String id, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithId(Class<org.hl7.fhir.instance.model.api.IBaseResource> resource, Long lId, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithId(Class<org.hl7.fhir.instance.model.api.IBaseResource> resource, org.hl7.fhir.instance.model.api.IIdType idType, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithIdAndVersion(Class<org.hl7.fhir.instance.model.api.IBaseResource> resource, String id, String version, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithUrl(Class<org.hl7.fhir.instance.model.api.IBaseResource> resource, String url, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithUrl(Class<org.hl7.fhir.instance.model.api.IBaseResource> resource, org.hl7.fhir.instance.model.api.IIdType iUrl, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithId(String resourceClass, String id, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithId(String resourceClass, Long lId, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithId(String resourceClass, org.hl7.fhir.instance.model.api.IIdType idType, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithIdAndVersion(String resourceClass, String id, String version, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithUrl(String resourceClass, String url, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);
+org.hl7.fhir.instance.model.api.IBaseResource resourceWithUrl(String resourceClass, org.hl7.fhir.instance.model.api.IIdType iUrl, String ifVersionMatches, Boolean returnNull, org.hl7.fhir.instance.model.api.IBaseResource returnResource, Boolean throwError);

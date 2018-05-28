@@ -14,8 +14,8 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T getFromServer(Class<T> theMetaType);
-<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T getFromResource(Class<T> theMetaType, org.hl7.fhir.instance.model.api.IIdType theId);
-<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T getFromType(Class<T> theMetaType, String theResourceName);
-<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T add(T theMeta, org.hl7.fhir.instance.model.api.IIdType theId);
-<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T delete(T theMeta, org.hl7.fhir.instance.model.api.IIdType theId);
+<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T getFromServer(Class<T> metaType);
+<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T getFromResource(Class<T> metaType, org.hl7.fhir.instance.model.api.IIdType id);
+<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T getFromType(Class<T> metaType, String theResourceName);
+<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T add(T meta, org.hl7.fhir.instance.model.api.IIdType id);
+<T extends org.hl7.fhir.instance.model.api.IBaseMetaType> T delete(T meta, org.hl7.fhir.instance.model.api.IIdType id);
