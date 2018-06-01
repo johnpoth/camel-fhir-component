@@ -6,9 +6,12 @@ package org.apache.camel.component.fhir;
 
 import java.util.HashMap;
 import java.util.Map;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirPatchApiMethod;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -16,65 +19,58 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirPatch} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirPatchIntegrationTest extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirPatchIntegrationTest.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirPatchApiMethod.class).getName();
+    private static final String PATCH = "[ { \"op\":\"replace\", \"path\":\"/active\", \"value\":true } ]";
 
-    // TODO provide parameter values for patchById
-    @Ignore
     @Test
     public void testPatchById() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelFhir.patchBody", null);
+        headers.put("CamelFhir.patchBody", PATCH);
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
-        headers.put("CamelFhir.iId", null);
+        headers.put("CamelFhir.id", this.patient.getIdElement());
         // parameter type is ca.uhn.fhir.rest.api.PreferReturnEnum
         headers.put("CamelFhir.preferReturn", null);
 
-        final ca.uhn.fhir.rest.api.MethodOutcome result = requestBodyAndHeaders("direct://PATCHBYID", null, headers);
-
+        MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_ID", null, headers);
         assertNotNull("patchById result", result);
-        LOG.debug("patchById: " + result);
+        assertActive(result);
     }
 
-    // TODO provide parameter values for patchBySId
-    @Ignore
     @Test
-    public void testPatchBySId() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+    public void testPatchByStringId() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelFhir.patchBody", null);
+        headers.put("CamelFhir.patchBody", PATCH);
         // parameter type is String
-        headers.put("CamelFhir.sId", null);
+        headers.put("CamelFhir.sId", this.patient.getId());
         // parameter type is ca.uhn.fhir.rest.api.PreferReturnEnum
         headers.put("CamelFhir.preferReturn", null);
 
-        final ca.uhn.fhir.rest.api.MethodOutcome result = requestBodyAndHeaders("direct://PATCHBYSID", null, headers);
-
-        assertNotNull("patchBySId result", result);
-        LOG.debug("patchBySId: " + result);
+        MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_SID", null, headers);
+        assertActive(result);
     }
 
-    // TODO provide parameter values for patchByUrl
-    @Ignore
     @Test
+    @Ignore(value="https://github.com/jamesagnew/hapi-fhir/issues/955")
     public void testPatchByUrl() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelFhir.patchBody", null);
+        headers.put("CamelFhir.patchBody", PATCH);
         // parameter type is String
-        headers.put("CamelFhir.url", null);
+        headers.put("CamelFhir.url", "Patient?given=Vincent&family=Freeman");
         // parameter type is ca.uhn.fhir.rest.api.PreferReturnEnum
         headers.put("CamelFhir.preferReturn", null);
 
-        final ca.uhn.fhir.rest.api.MethodOutcome result = requestBodyAndHeaders("direct://PATCHBYURL", null, headers);
+        MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_URL", null, headers);
 
         assertNotNull("patchByUrl result", result);
+        assertActive(result);
         LOG.debug("patchByUrl: " + result);
     }
 
@@ -83,18 +79,27 @@ public class FhirPatchIntegrationTest extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for patchById
-                from("direct://PATCHBYID")
+                from("direct://PATCH_BY_ID")
                     .to("fhir://" + PATH_PREFIX + "/patchById");
 
                 // test route for patchBySId
-                from("direct://PATCHBYSID")
-                    .to("fhir://" + PATH_PREFIX + "/patchBySId");
+                from("direct://PATCH_BY_SID")
+                    .to("fhir://" + PATH_PREFIX + "/patchById");
 
                 // test route for patchByUrl
-                from("direct://PATCHBYURL")
+                from("direct://PATCH_BY_URL")
                     .to("fhir://" + PATH_PREFIX + "/patchByUrl");
 
             }
         };
+    }
+
+    private void assertActive(MethodOutcome result) {
+        IIdType id = result.getId();
+
+        Patient patient = fhirClient.read().resource(Patient.class).withId(id).preferResponseType(Patient.class).execute();
+        System.out.print(fhirContext.newJsonParser().encodeResourceToString(patient));
+        assertTrue(patient.getActive());
+        LOG.debug("patchById: " + result);
     }
 }

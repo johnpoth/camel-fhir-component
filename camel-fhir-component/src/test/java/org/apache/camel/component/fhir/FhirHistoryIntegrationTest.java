@@ -9,14 +9,14 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirHistoryApiMethod;
-import org.junit.Ignore;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirHistory} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirHistoryIntegrationTest extends AbstractFhirTestSupport {
@@ -24,67 +24,46 @@ public class FhirHistoryIntegrationTest extends AbstractFhirTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FhirHistoryIntegrationTest.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirHistoryApiMethod.class).getName();
 
-    // TODO provide parameter values for onInstance
-    @Ignore
     @Test
     public void testOnInstance() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is org.hl7.fhir.instance.model.api.IIdType
-        headers.put("CamelFhir.id", null);
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put("CamelFhir.id", this.patient.getIdElement());
         // parameter type is Class
-        headers.put("CamelFhir.returnType", null);
+        headers.put("CamelFhir.returnType", Bundle.class);
         // parameter type is Integer
-        headers.put("CamelFhir.count", null);
-        // parameter type is java.util.Date
-        headers.put("CamelFhir.cutoff", null);
-        // parameter type is org.hl7.fhir.instance.model.api.IPrimitiveType
-        headers.put("CamelFhir.iCutoff", null);
+        headers.put("CamelFhir.count", 1);
 
-        final org.hl7.fhir.instance.model.api.IBaseBundle result = requestBodyAndHeaders("direct://ONINSTANCE", null, headers);
-
+        Bundle result = requestBodyAndHeaders("direct://ON_INSTANCE", null, headers);
         assertNotNull("onInstance result", result);
+        assertEquals(1, result.getEntry().size());
         LOG.debug("onInstance: " + result);
     }
 
-    // TODO provide parameter values for onServer
-    @Ignore
     @Test
     public void testOnServer() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is Class
-        headers.put("CamelFhir.returnType", null);
-        // parameter type is Integer
-        headers.put("CamelFhir.count", null);
-        // parameter type is java.util.Date
-        headers.put("CamelFhir.cutoff", null);
-        // parameter type is org.hl7.fhir.instance.model.api.IPrimitiveType
-        headers.put("CamelFhir.iCutoff", null);
-
-        final org.hl7.fhir.instance.model.api.IBaseBundle result = requestBodyAndHeaders("direct://ONSERVER", null, headers);
-
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("CamelFhir.returnType", Bundle.class);
+        headers.put("CamelFhir.count", 1);
+        Bundle result = requestBodyAndHeaders("direct://ON_SERVER", null, headers);
         assertNotNull("onServer result", result);
+        assertEquals(1, result.getEntry().size());
         LOG.debug("onServer: " + result);
     }
 
-    // TODO provide parameter values for onType
-    @Ignore
     @Test
     public void testOnType() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
-        headers.put("CamelFhir.theResourceType", null);
+        headers.put("CamelFhir.theResourceType", Patient.class);
         // parameter type is Class
-        headers.put("CamelFhir.returnType", null);
+        headers.put("CamelFhir.returnType", Bundle.class);
         // parameter type is Integer
-        headers.put("CamelFhir.count", null);
-        // parameter type is java.util.Date
-        headers.put("CamelFhir.cutoff", null);
-        // parameter type is org.hl7.fhir.instance.model.api.IPrimitiveType
-        headers.put("CamelFhir.iCutoff", null);
+        headers.put("CamelFhir.count", 1);
 
-        final org.hl7.fhir.instance.model.api.IBaseBundle result = requestBodyAndHeaders("direct://ONTYPE", null, headers);
+        Bundle result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
         assertNotNull("onType result", result);
+        assertEquals(1, result.getEntry().size());
         LOG.debug("onType: " + result);
     }
 
@@ -93,17 +72,16 @@ public class FhirHistoryIntegrationTest extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for onInstance
-                from("direct://ONINSTANCE")
+                from("direct://ON_INSTANCE")
                     .to("fhir://" + PATH_PREFIX + "/onInstance");
 
                 // test route for onServer
-                from("direct://ONSERVER")
+                from("direct://ON_SERVER")
                     .to("fhir://" + PATH_PREFIX + "/onServer");
 
                 // test route for onType
-                from("direct://ONTYPE")
+                from("direct://ON_TYPE")
                     .to("fhir://" + PATH_PREFIX + "/onType");
-
             }
         };
     }

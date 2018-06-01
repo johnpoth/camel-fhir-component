@@ -21,65 +21,67 @@ public class FhirRead {
         this.client = client;
     }
 
-    public IBaseResource  resourceWithId(Class<IBaseResource> resource, String id, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+
+    public IBaseResource resourceById(Class<IBaseResource> resource, IIdType id, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
         IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withId(id);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
-    public IBaseResource resourceWithId(Class<IBaseResource> resource, Long lId, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withId(lId);
+    public IBaseResource resourceById(String resourceClass, IIdType id, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withId(id);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
-    public IBaseResource resourceWithId(Class<IBaseResource> resource, IIdType idType, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withId(idType);
-        return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
-    }
-
-    public IBaseResource resourceWithIdAndVersion(Class<IBaseResource> resource, String id, String version, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withIdAndVersion(id, version);
-        return processOptionalParams(version, returnNull, returnResource, throwError, readExecutable);
-    }
-
-    public IBaseResource resourceWithUrl(Class<IBaseResource> resource, String url, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withUrl(url);
-        return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
-    }
-
-    public IBaseResource resourceWithUrl(Class<IBaseResource> resource, IIdType iUrl, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+    public IBaseResource resourceByUrl(Class<IBaseResource> resource, IIdType iUrl, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
         IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withUrl(iUrl);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
-    public IBaseResource resourceWithId(String resource, String id, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withId(id);
+    public IBaseResource resourceByUrl(String resourceClass, IIdType iUrl, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withUrl(iUrl);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
-    public IBaseResource resourceWithId(String resourceClass, Long lId, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withId(lId);
+    public IBaseResource  resourceById(Class<IBaseResource> resource, String sId, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withId(sId);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
-    public IBaseResource resourceWithId(String resourceClass, IIdType idType, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withId(idType);
+    public IBaseResource resourceByUrl(Class<IBaseResource> resource, String url, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withUrl(url);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
-    public IBaseResource resourceWithIdAndVersion(String resourceClass, String id, String version, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withIdAndVersion(id, version);
-        return processOptionalParams(version, returnNull, returnResource, throwError, readExecutable);
+    public IBaseResource resourceById(String resourceClass, String sId, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withId(sId);
+        return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
-    public IBaseResource resourceWithUrl(String resourceClass, String url, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+    public IBaseResource resourceById(String resourceClass, String sId, String version, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withIdAndVersion(sId, version);
+        return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
+    }
+
+    public IBaseResource resourceById(Class<IBaseResource> resource, String sId, String version, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withIdAndVersion(sId, version);
+        return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
+    }
+
+    public IBaseResource resourceByUrl(String resourceClass, String url, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
         IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withUrl(url);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
-    public IBaseResource resourceWithUrl(String resourceClass, IIdType iUrl, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
-        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withUrl(iUrl);
+    public IBaseResource resourceById(Class<IBaseResource> resource, Long lId, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resource).withId(lId);
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
+
+    public IBaseResource resourceById(String resourceClass, Long lId, String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError) {
+        IReadExecutable<IBaseResource> readExecutable = client.read().resource(resourceClass).withId(lId);
+        return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
+    }
+
 
     private IBaseResource processOptionalParams(String ifVersionMatches, Boolean returnNull, IBaseResource returnResource, Boolean throwError, IReadExecutable<IBaseResource> readExecutable) {
         if (ifVersionMatches != null) {

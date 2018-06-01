@@ -4,19 +4,25 @@
  */
 package org.apache.camel.component.fhir;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirLoadPageApiMethod;
-import org.junit.Ignore;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirLoadPage} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirLoadPageIntegrationTest extends AbstractFhirTestSupport {
@@ -24,42 +30,77 @@ public class FhirLoadPageIntegrationTest extends AbstractFhirTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FhirLoadPageIntegrationTest.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirLoadPageApiMethod.class).getName();
 
-    // TODO provide parameter values for byUrl
-    @Ignore
     @Test
     public void testByUrl() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        String url = "Patient?_count=2";
+        Bundle bundle = this.fhirClient.search()
+                .byUrl(url)
+                .returnBundle(Bundle.class).execute();
+        assertNotNull(bundle.getLink(Bundle.LINK_NEXT));
+
+        String nextPageLink = bundle.getLink("next").getUrl();
+
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelFhir.url", null);
+        headers.put("CamelFhir.url", nextPageLink);
         // parameter type is Class
-        headers.put("CamelFhir.returnType", null);
-
-        final org.hl7.fhir.instance.model.api.IBaseBundle result = requestBodyAndHeaders("direct://BYURL", null, headers);
-
+        headers.put("CamelFhir.returnType", Bundle.class);
+        IBaseBundle result = requestBodyAndHeaders("direct://BY_URL", null, headers);
         assertNotNull("byUrl result", result);
         LOG.debug("byUrl: " + result);
     }
 
-    // TODO provide parameter values for next
-    @Ignore
     @Test
     public void testNext() throws Exception {
+        String url = "Patient?_count=2";
+        Bundle bundle = this.fhirClient.search()
+                                       .byUrl(url)
+                                       .returnBundle(Bundle.class).execute();
+        assertNotNull(bundle.getLink(Bundle.LINK_NEXT));
+
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
-        final org.hl7.fhir.instance.model.api.IBaseBundle result = requestBody("direct://NEXT", null);
+        Bundle result = requestBody("direct://NEXT", bundle);
 
         assertNotNull("next result", result);
         LOG.debug("next: " + result);
     }
 
-    // TODO provide parameter values for previous
-    @Ignore
     @Test
     public void testPrevious() throws Exception {
-        // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
-        final org.hl7.fhir.instance.model.api.IBaseBundle result = requestBody("direct://PREVIOUS", null);
+        String url = "Patient?_count=2";
+        Bundle bundle = this.fhirClient.search()
+                .byUrl(url)
+                .returnBundle(Bundle.class).execute();
+        assertNotNull(bundle.getLink(Bundle.LINK_NEXT));
 
+        String nextPageLink = bundle.getLink("next").getUrl();
+        bundle = this.fhirClient.loadPage().byUrl(nextPageLink).andReturnBundle(Bundle.class).execute();
+        assertNotNull(bundle.getLink(Bundle.LINK_PREV));
+        // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
+        Bundle result = requestBody("direct://PREVIOUS", bundle);
         assertNotNull("previous result", result);
         LOG.debug("previous: " + result);
+    }
+
+    @Before
+    public void populateServer() {
+        List<IBaseResource> input = new ArrayList<>();
+
+        Patient p1 = new Patient();
+        p1.addName().setFamily("PATIENT1");
+        input.add(p1);
+
+        Patient p2 = new Patient();
+        p2.addName().setFamily("PATIENT2");
+        input.add(p2);
+
+        input.add(new Patient().addName(new HumanName().setFamily("PATIENT3")));
+
+        List<IBaseResource> response = fhirClient.transaction()
+                .withResources(input)
+                .encodedJson()
+                .execute();
+        assertEquals(3, response.size());
     }
 
     @Override
@@ -67,7 +108,7 @@ public class FhirLoadPageIntegrationTest extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for byUrl
-                from("direct://BYURL")
+                from("direct://BY_URL")
                     .to("fhir://" + PATH_PREFIX + "/byUrl");
 
                 // test route for next

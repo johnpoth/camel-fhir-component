@@ -7,14 +7,14 @@ package org.apache.camel.component.fhir;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCapabilitiesApiMethod;
-import org.junit.Ignore;
+import org.hl7.fhir.dstu3.model.CapabilityStatement;
+import org.hl7.fhir.dstu3.model.Enumerations;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirCapabilities} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirCapabilitiesIntegrationTest extends AbstractFhirTestSupport {
@@ -22,14 +22,11 @@ public class FhirCapabilitiesIntegrationTest extends AbstractFhirTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FhirCapabilitiesIntegrationTest.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirCapabilitiesApiMethod.class).getName();
 
-    // TODO provide parameter values for ofType
-    @Ignore
     @Test
     public void testOfType() throws Exception {
-        // using Class message body for single parameter "type"
-        final org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OFTYPE", null);
-
+        org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OFTYPE", CapabilityStatement.class);
         assertNotNull("ofType result", result);
+        assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement)result).getStatus());
         LOG.debug("ofType: " + result);
     }
 

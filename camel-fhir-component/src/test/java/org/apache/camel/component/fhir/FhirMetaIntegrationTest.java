@@ -9,6 +9,9 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirMetaApiMethod;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Meta;
+import org.hl7.fhir.instance.model.api.IBaseMetaType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -16,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirMeta} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirMetaIntegrationTest extends AbstractFhirTestSupport {
@@ -24,76 +26,85 @@ public class FhirMetaIntegrationTest extends AbstractFhirTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FhirMetaIntegrationTest.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirMetaApiMethod.class).getName();
 
-    // TODO provide parameter values for add
-    @Ignore
     @Test
     public void testAdd() throws Exception {
+        //assert no meta
+        Meta meta = fhirClient.meta().get(Meta.class).fromResource(this.patient.getIdElement()).execute();
+        assertEquals(0, meta.getTag().size());
+        Meta inMeta = new Meta();
+        inMeta.addTag().setSystem("urn:system1").setCode("urn:code1");
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is org.hl7.fhir.instance.model.api.IBaseMetaType
-        headers.put("CamelFhir.meta", null);
+        headers.put("CamelFhir.meta", inMeta);
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
-        headers.put("CamelFhir.id", null);
+        headers.put("CamelFhir.id", this.patient.getIdElement());
 
-        final org.hl7.fhir.instance.model.api.IBaseMetaType result = requestBodyAndHeaders("direct://ADD", null, headers);
+        IBaseMetaType result = requestBodyAndHeaders("direct://ADD", null, headers);
 
         assertNotNull("add result", result);
+        assertEquals(1, result.getTag().size());
         LOG.debug("add: " + result);
     }
 
-    // TODO provide parameter values for delete
-    @Ignore
     @Test
     public void testDelete() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        //assert no meta
+        Meta meta = fhirClient.meta().get(Meta.class).fromResource(this.patient.getIdElement()).execute();
+        assertEquals(0, meta.getTag().size());
+        Meta inMeta = new Meta();
+        inMeta.addTag().setSystem("urn:system1").setCode("urn:code1");
+        // add meta
+        meta = fhirClient.meta().
+                                add().
+                                onResource(this.patient.getIdElement()).
+                                meta(inMeta).
+                                execute();
+        assertEquals(1, meta.getTag().size());
+
+        //delete meta
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is org.hl7.fhir.instance.model.api.IBaseMetaType
-        headers.put("CamelFhir.meta", null);
+        headers.put("CamelFhir.meta", meta);
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
-        headers.put("CamelFhir.id", null);
-
-        final org.hl7.fhir.instance.model.api.IBaseMetaType result = requestBodyAndHeaders("direct://DELETE", null, headers);
-
+        headers.put("CamelFhir.id", this.patient.getIdElement());
+        IBaseMetaType result = requestBodyAndHeaders("direct://DELETE", null, headers);
         assertNotNull("delete result", result);
+        assertEquals(0, result.getTag().size());
         LOG.debug("delete: " + result);
     }
 
-    // TODO provide parameter values for getFromResource
-    @Ignore
     @Test
     public void testGetFromResource() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
-        headers.put("CamelFhir.metaType", null);
+        headers.put("CamelFhir.metaType", Meta.class);
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
-        headers.put("CamelFhir.id", null);
+        headers.put("CamelFhir.id", this.patient.getIdElement());
 
-        final org.hl7.fhir.instance.model.api.IBaseMetaType result = requestBodyAndHeaders("direct://GETFROMRESOURCE", null, headers);
+        IBaseMetaType result = requestBodyAndHeaders("direct://GET_FROM_RESOURCE", null, headers);
 
         assertNotNull("getFromResource result", result);
+        assertEquals(0, result.getTag().size());
         LOG.debug("getFromResource: " + result);
     }
 
-    // TODO provide parameter values for getFromServer
-    @Ignore
     @Test
     public void testGetFromServer() throws Exception {
         // using Class message body for single parameter "metaType"
-        final org.hl7.fhir.instance.model.api.IBaseMetaType result = requestBody("direct://GETFROMSERVER", null);
-
+        IBaseMetaType result = requestBody("direct://GET_FROM_SERVER", Meta.class);
         assertNotNull("getFromServer result", result);
         LOG.debug("getFromServer: " + result);
     }
 
-    // TODO provide parameter values for getFromType
-    @Ignore
     @Test
     public void testGetFromType() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
-        headers.put("CamelFhir.metaType", null);
+        headers.put("CamelFhir.metaType", Meta.class);
         // parameter type is String
-        headers.put("CamelFhir.theResourceName", null);
+        headers.put("CamelFhir.theResourceName", "Patient");
 
-        final org.hl7.fhir.instance.model.api.IBaseMetaType result = requestBodyAndHeaders("direct://GETFROMTYPE", null, headers);
+        IBaseMetaType result = requestBodyAndHeaders("direct://GET_FROM_TYPE", null, headers);
 
         assertNotNull("getFromType result", result);
         LOG.debug("getFromType: " + result);
@@ -112,15 +123,15 @@ public class FhirMetaIntegrationTest extends AbstractFhirTestSupport {
                     .to("fhir://" + PATH_PREFIX + "/delete");
 
                 // test route for getFromResource
-                from("direct://GETFROMRESOURCE")
+                from("direct://GET_FROM_RESOURCE")
                     .to("fhir://" + PATH_PREFIX + "/getFromResource");
 
                 // test route for getFromServer
-                from("direct://GETFROMSERVER")
+                from("direct://GET_FROM_SERVER")
                     .to("fhir://" + PATH_PREFIX + "/getFromServer?inBody=metaType");
 
                 // test route for getFromType
-                from("direct://GETFROMTYPE")
+                from("direct://GET_FROM_TYPE")
                     .to("fhir://" + PATH_PREFIX + "/getFromType");
 
             }

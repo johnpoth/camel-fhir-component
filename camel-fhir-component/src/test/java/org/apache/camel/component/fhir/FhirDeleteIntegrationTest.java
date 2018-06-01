@@ -9,14 +9,13 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirDeleteApiMethod;
-import org.junit.Ignore;
+import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirDelete} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirDeleteIntegrationTest extends AbstractFhirTestSupport {
@@ -24,52 +23,48 @@ public class FhirDeleteIntegrationTest extends AbstractFhirTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FhirDeleteIntegrationTest.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirDeleteApiMethod.class).getName();
 
-    // TODO provide parameter values for resource
-    @Ignore
     @Test
-    public void testResource() throws Exception {
+    public void testDeleteResource() throws Exception {
+        assertTrue(patientExists());
         // using org.hl7.fhir.instance.model.api.IBaseResource message body for single parameter "resource"
-        final org.hl7.fhir.instance.model.api.IBaseOperationOutcome result = requestBody("direct://RESOURCE", null);
+        IBaseOperationOutcome result = requestBody("direct://RESOURCE", this.patient);
 
         assertNotNull("resource result", result);
+        assertFalse(patientExists());
         LOG.debug("resource: " + result);
     }
 
-    // TODO provide parameter values for resourceById
-    @Ignore
     @Test
-    public void testResourceById() throws Exception {
+    public void testDeleteResourceById() throws Exception {
+        assertTrue(patientExists());
         // using org.hl7.fhir.instance.model.api.IIdType message body for single parameter "id"
-        final org.hl7.fhir.instance.model.api.IBaseOperationOutcome result = requestBody("direct://RESOURCEBYID", null);
+        IBaseOperationOutcome result = requestBody("direct://RESOURCE_BY_ID", this.patient.getIdElement());
 
         assertNotNull("resourceById result", result);
+        assertFalse(patientExists());
         LOG.debug("resourceById: " + result);
     }
 
-    // TODO provide parameter values for resourceById
-    @Ignore
     @Test
-    public void testResourceById_1() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+    public void testDeleteResourceByStringId() throws Exception {
+        assertTrue(patientExists());
+        Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelFhir.type", null);
+        headers.put("CamelFhir.type", "Patient");
         // parameter type is String
-        headers.put("CamelFhir.sId", null);
-
-        final org.hl7.fhir.instance.model.api.IBaseOperationOutcome result = requestBodyAndHeaders("direct://RESOURCEBYID_1", null, headers);
-
+        headers.put("CamelFhir.sId", this.patient.getIdElement().getIdPart());
+        IBaseOperationOutcome result = requestBodyAndHeaders("direct://RESOURCE_BY_STRING_ID", null, headers);
         assertNotNull("resourceById result", result);
+        assertFalse(patientExists());
         LOG.debug("resourceById: " + result);
     }
 
-    // TODO provide parameter values for resourceConditionalByUrl
-    @Ignore
     @Test
-    public void testResourceConditionalByUrl() throws Exception {
-        // using String message body for single parameter "url"
-        final org.hl7.fhir.instance.model.api.IBaseOperationOutcome result = requestBody("direct://RESOURCECONDITIONALBYURL", null);
-
+    public void testDeleteResourceConditionalByUrl() throws Exception {
+        assertTrue(patientExists());
+        IBaseOperationOutcome result = requestBody("direct://RESOURCE_CONDITIONAL_BY_URL", "Patient?given=Vincent&family=Freeman");
         assertNotNull("resourceConditionalByUrl result", result);
+        assertFalse(patientExists());
         LOG.debug("resourceConditionalByUrl: " + result);
     }
 
@@ -82,15 +77,15 @@ public class FhirDeleteIntegrationTest extends AbstractFhirTestSupport {
                     .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource");
 
                 // test route for resourceById
-                from("direct://RESOURCEBYID")
+                from("direct://RESOURCE_BY_ID")
                     .to("fhir://" + PATH_PREFIX + "/resourceById?inBody=id");
 
                 // test route for resourceById
-                from("direct://RESOURCEBYID_1")
+                from("direct://RESOURCE_BY_STRING_ID")
                     .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceConditionalByUrl
-                from("direct://RESOURCECONDITIONALBYURL")
+                from("direct://RESOURCE_CONDITIONAL_BY_URL")
                     .to("fhir://" + PATH_PREFIX + "/resourceConditionalByUrl?inBody=url");
 
             }

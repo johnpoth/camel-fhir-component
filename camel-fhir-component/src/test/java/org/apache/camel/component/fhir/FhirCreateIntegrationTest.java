@@ -6,9 +6,13 @@ package org.apache.camel.component.fhir;
 
 import java.util.HashMap;
 import java.util.Map;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -16,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirCreate} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirCreateIntegrationTest extends AbstractFhirTestSupport {
@@ -24,39 +27,22 @@ public class FhirCreateIntegrationTest extends AbstractFhirTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FhirCreateIntegrationTest.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirCreateApiMethod.class).getName();
 
-    // TODO provide parameter values for resource
-    @Ignore
     @Test
-    public void testResource() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is org.hl7.fhir.instance.model.api.IBaseResource
-        headers.put("CamelFhir.resource", null);
-        // parameter type is String
-        headers.put("CamelFhir.url", null);
-        // parameter type is ca.uhn.fhir.rest.api.PreferReturnEnum
-        headers.put("CamelFhir.preferReturn", null);
-
-        final ca.uhn.fhir.rest.api.MethodOutcome result = requestBodyAndHeaders("direct://RESOURCE", null, headers);
-
+    public void testCreateResource() throws Exception {
+        Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
+        MethodOutcome result = requestBody("direct://RESOURCE", patient);
         assertNotNull("resource result", result);
+        assertTrue(result.getCreated());
         LOG.debug("resource: " + result);
     }
 
-    // TODO provide parameter values for resource
-    @Ignore
     @Test
-    public void testResource_1() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelFhir.sResource", null);
-        // parameter type is String
-        headers.put("CamelFhir.url", null);
-        // parameter type is ca.uhn.fhir.rest.api.PreferReturnEnum
-        headers.put("CamelFhir.preferReturn", null);
-
-        final ca.uhn.fhir.rest.api.MethodOutcome result = requestBodyAndHeaders("direct://RESOURCE_1", null, headers);
-
+    public void testCreateStringResource() throws Exception {
+        Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
+        String patientString = this.fhirContext.newXmlParser().encodeResourceToString(patient);
+        MethodOutcome result = requestBody("direct://RESOURCE_STRING", patientString);
         assertNotNull("resource result", result);
+        assertTrue(result.getCreated());
         LOG.debug("resource: " + result);
     }
 
@@ -66,11 +52,11 @@ public class FhirCreateIntegrationTest extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for resource
                 from("direct://RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resource");
+                    .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource");
 
                 // test route for resource
-                from("direct://RESOURCE_1")
-                    .to("fhir://" + PATH_PREFIX + "/resource");
+                from("direct://RESOURCE_STRING")
+                    .to("fhir://" + PATH_PREFIX + "/resource?inBody=sResource");
 
             }
         };
