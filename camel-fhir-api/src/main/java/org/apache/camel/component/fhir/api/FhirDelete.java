@@ -40,11 +40,11 @@ public class FhirDelete {
     /**
      * Deletes the resource by resource type e.g "Patient" and it's id
      * @param type the resource type e.g "Patient"
-     * @param sId it's id
+     * @param stringId it's id
      * @return the {@link IBaseOperationOutcome}
      */
-    public IBaseOperationOutcome resourceById(String type, String sId) {
-        return client.delete().resourceById(type, sId).execute();
+    public IBaseOperationOutcome resourceById(String type, String stringId) {
+        return client.delete().resourceById(type, stringId).execute();
     }
 
     /**

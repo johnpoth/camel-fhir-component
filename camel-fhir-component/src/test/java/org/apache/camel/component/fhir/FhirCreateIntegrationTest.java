@@ -30,20 +30,24 @@ public class FhirCreateIntegrationTest extends AbstractFhirTestSupport {
     @Test
     public void testCreateResource() throws Exception {
         Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
+
         MethodOutcome result = requestBody("direct://RESOURCE", patient);
+
+        LOG.debug("resource: " + result);
         assertNotNull("resource result", result);
         assertTrue(result.getCreated());
-        LOG.debug("resource: " + result);
     }
 
     @Test
     public void testCreateStringResource() throws Exception {
         Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
         String patientString = this.fhirContext.newXmlParser().encodeResourceToString(patient);
+
         MethodOutcome result = requestBody("direct://RESOURCE_STRING", patientString);
+
+        LOG.debug("resource: " + result);
         assertNotNull("resource result", result);
         assertTrue(result.getCreated());
-        LOG.debug("resource: " + result);
     }
 
     @Override
@@ -56,7 +60,7 @@ public class FhirCreateIntegrationTest extends AbstractFhirTestSupport {
 
                 // test route for resource
                 from("direct://RESOURCE_STRING")
-                    .to("fhir://" + PATH_PREFIX + "/resource?inBody=sResource");
+                    .to("fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString");
 
             }
         };

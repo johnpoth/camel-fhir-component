@@ -41,9 +41,9 @@ public class FhirMetaIntegrationTest extends AbstractFhirTestSupport {
 
         IBaseMetaType result = requestBodyAndHeaders("direct://ADD", null, headers);
 
+        LOG.debug("add: " + result);
         assertNotNull("add result", result);
         assertEquals(1, result.getTag().size());
-        LOG.debug("add: " + result);
     }
 
     @Test
@@ -67,10 +67,12 @@ public class FhirMetaIntegrationTest extends AbstractFhirTestSupport {
         headers.put("CamelFhir.meta", meta);
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
         headers.put("CamelFhir.id", this.patient.getIdElement());
+
         IBaseMetaType result = requestBodyAndHeaders("direct://DELETE", null, headers);
+
+        LOG.debug("delete: " + result);
         assertNotNull("delete result", result);
         assertEquals(0, result.getTag().size());
-        LOG.debug("delete: " + result);
     }
 
     @Test
@@ -83,9 +85,9 @@ public class FhirMetaIntegrationTest extends AbstractFhirTestSupport {
 
         IBaseMetaType result = requestBodyAndHeaders("direct://GET_FROM_RESOURCE", null, headers);
 
+        LOG.debug("getFromResource: " + result);
         assertNotNull("getFromResource result", result);
         assertEquals(0, result.getTag().size());
-        LOG.debug("getFromResource: " + result);
     }
 
     @Test
@@ -106,8 +108,8 @@ public class FhirMetaIntegrationTest extends AbstractFhirTestSupport {
 
         IBaseMetaType result = requestBodyAndHeaders("direct://GET_FROM_TYPE", null, headers);
 
-        assertNotNull("getFromType result", result);
         LOG.debug("getFromType: " + result);
+        assertNotNull("getFromType result", result);
     }
 
     @Override

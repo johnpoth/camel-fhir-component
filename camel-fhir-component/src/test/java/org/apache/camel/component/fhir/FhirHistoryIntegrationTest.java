@@ -34,9 +34,10 @@ public class FhirHistoryIntegrationTest extends AbstractFhirTestSupport {
         headers.put("CamelFhir.count", 1);
 
         Bundle result = requestBodyAndHeaders("direct://ON_INSTANCE", null, headers);
+
+        LOG.debug("onInstance: " + result);
         assertNotNull("onInstance result", result);
         assertEquals(1, result.getEntry().size());
-        LOG.debug("onInstance: " + result);
     }
 
     @Test
@@ -45,16 +46,17 @@ public class FhirHistoryIntegrationTest extends AbstractFhirTestSupport {
         headers.put("CamelFhir.returnType", Bundle.class);
         headers.put("CamelFhir.count", 1);
         Bundle result = requestBodyAndHeaders("direct://ON_SERVER", null, headers);
+
+        LOG.debug("onServer: " + result);
         assertNotNull("onServer result", result);
         assertEquals(1, result.getEntry().size());
-        LOG.debug("onServer: " + result);
     }
 
     @Test
     public void testOnType() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
-        headers.put("CamelFhir.theResourceType", Patient.class);
+        headers.put("CamelFhir.resourceType", Patient.class);
         // parameter type is Class
         headers.put("CamelFhir.returnType", Bundle.class);
         // parameter type is Integer
@@ -62,9 +64,9 @@ public class FhirHistoryIntegrationTest extends AbstractFhirTestSupport {
 
         Bundle result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
+        LOG.debug("onType: " + result);
         assertNotNull("onType result", result);
         assertEquals(1, result.getEntry().size());
-        LOG.debug("onType: " + result);
     }
 
     @Override

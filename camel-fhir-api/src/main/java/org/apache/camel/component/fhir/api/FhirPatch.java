@@ -63,14 +63,14 @@ public class FhirPatch {
      *
      * @param patchBody The body of the patch document serialized in either XML or JSON which conforms to
      *                     http://jsonpatch.com/ or http://tools.ietf.org/html/rfc5261
-     * @param sId The resource ID to patch
+     * @param stringId The resource ID to patch
      * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                         or suppress the resource body as a part of the result. If a resource is returned by the server
      *                         it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}
      * @return
      */
-    public MethodOutcome patchById(String patchBody, String sId, PreferReturnEnum preferReturn) {
-        IPatchExecutable patchExecutable = client.patch().withBody(patchBody).withId(sId);
+    public MethodOutcome patchById(String patchBody, String stringId, PreferReturnEnum preferReturn) {
+        IPatchExecutable patchExecutable = client.patch().withBody(patchBody).withId(stringId);
         if (preferReturn != null) {
             patchExecutable = patchExecutable.prefer(preferReturn);
         }

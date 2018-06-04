@@ -19,17 +19,17 @@ public class FhirUpdate {
         this.client = client;
     }
 
-    public MethodOutcome resource(IBaseResource resource, IIdType id, String sId, String url, PreferReturnEnum preferReturn){
+    public MethodOutcome resource(IBaseResource resource, IIdType id, String stringId, String url, PreferReturnEnum preferReturn){
         IUpdateTyped updateTyped = client.update().resource(resource);
-        return processOptionalParams(id, sId, url, preferReturn, updateTyped);
+        return processOptionalParams(id, stringId, url, preferReturn, updateTyped);
     }
 
-    public MethodOutcome resource(String sResource, IIdType id, String sId, String url, PreferReturnEnum preferReturn){
+    public MethodOutcome resource(String sResource, IIdType id, String stringId, String url, PreferReturnEnum preferReturn){
         IUpdateTyped updateTyped = client.update().resource(sResource);
-        return processOptionalParams(id, sId, url, preferReturn, updateTyped);
+        return processOptionalParams(id, stringId, url, preferReturn, updateTyped);
     }
 
-    private MethodOutcome processOptionalParams(IIdType id, String sId, String url, PreferReturnEnum preferReturn, IUpdateTyped updateTyped) {
+    private MethodOutcome processOptionalParams(IIdType id, String stringId, String url, PreferReturnEnum preferReturn, IUpdateTyped updateTyped) {
         if(url != null) {
             updateTyped = updateTyped.conditionalByUrl(url);
             if (preferReturn != null) {
@@ -42,7 +42,7 @@ public class FhirUpdate {
                return updateExecutable.prefer(preferReturn).execute();
             }
         }
-        else if (sId !=null){
+        else if (stringId !=null){
             IUpdateExecutable updateExecutable = updateTyped.withId(id);
             if (preferReturn != null) {
                 return updateExecutable.prefer(preferReturn).execute();

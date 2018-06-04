@@ -37,7 +37,7 @@ public class FhirCreate {
     /**
      * Creates a {@link IBaseResource} on the server
      *
-     * @param sResource The resource to create
+     * @param resourceAsString The resource to create
      * @param url The search URL to use. The format of this URL should be of the form <code>[ResourceType]?[Parameters]</code>,
      *                     for example: <code>Patient?name=Smith&amp;identifier=13.2.4.11.4%7C847366</code>, may be null
      * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
@@ -45,8 +45,8 @@ public class FhirCreate {
      *                  it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}, may be null
      * @return The {@link MethodOutcome}
      */
-    public MethodOutcome resource(String sResource, String url, PreferReturnEnum preferReturn) {
-        ICreateTyped createTyped = client.create().resource(sResource);
+    public MethodOutcome resource(String resourceAsString, String url, PreferReturnEnum preferReturn) {
+        ICreateTyped createTyped = client.create().resource(resourceAsString);
         createTyped = processOptionalParams(url, preferReturn, createTyped);
         return createTyped.execute();
     }

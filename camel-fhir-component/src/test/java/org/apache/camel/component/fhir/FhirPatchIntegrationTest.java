@@ -48,7 +48,7 @@ public class FhirPatchIntegrationTest extends AbstractFhirTestSupport {
         // parameter type is String
         headers.put("CamelFhir.patchBody", PATCH);
         // parameter type is String
-        headers.put("CamelFhir.sId", this.patient.getId());
+        headers.put("CamelFhir.stringId", this.patient.getId());
         // parameter type is ca.uhn.fhir.rest.api.PreferReturnEnum
         headers.put("CamelFhir.preferReturn", null);
 
@@ -70,8 +70,8 @@ public class FhirPatchIntegrationTest extends AbstractFhirTestSupport {
         MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_URL", null, headers);
 
         assertNotNull("patchByUrl result", result);
-        assertActive(result);
         LOG.debug("patchByUrl: " + result);
+        assertActive(result);
     }
 
     @Override
@@ -95,11 +95,11 @@ public class FhirPatchIntegrationTest extends AbstractFhirTestSupport {
     }
 
     private void assertActive(MethodOutcome result) {
+        LOG.debug("result: " + result);
         IIdType id = result.getId();
 
         Patient patient = fhirClient.read().resource(Patient.class).withId(id).preferResponseType(Patient.class).execute();
         System.out.print(fhirContext.newJsonParser().encodeResourceToString(patient));
         assertTrue(patient.getActive());
-        LOG.debug("patchById: " + result);
     }
 }

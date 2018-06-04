@@ -41,14 +41,6 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
    }
 
    @Test
-   @Ignore
-   public void testRead() {
-      Patient patient = getPatient(this.id);
-      assertNotNull(patient);
-      assertEquals("Freeman", patient.getName().get(0).getFamily());
-   }
-
-   @Test
    public void testSearch() {
       final String url = "Patient?given=Vincent&family=Freeman&_format=json";
       Bundle bundle = requestBody("direct://search", url);
@@ -57,12 +49,6 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
       assertEquals("Freeman", patient.getName().get(0).getFamily());
    }
 
-
-   @Test
-   public void testDelete() {
-      requestBody("direct://delete", "Patient?given=Vincent&family=Freeman");
-      assertFalse(patientExists());
-   }
 
    @Test
    @Ignore
@@ -152,7 +138,6 @@ public class FhirComponentTest extends AbstractFhirTestSupport {
       return new RouteBuilder() {
          public void configure() {
             // test routes for read
-            from("direct://read").to("fhir://read/resourceWithId");
             from("direct://search").to("fhir://search/searchByUrl?inBody=url");
             from("direct://delete").to("fhir://delete/resourceConditionalByUrl?inBody=url");
             from("direct://create").to("fhir://create/resource?inBody=resource");

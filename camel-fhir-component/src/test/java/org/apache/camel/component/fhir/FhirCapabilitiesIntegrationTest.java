@@ -25,9 +25,10 @@ public class FhirCapabilitiesIntegrationTest extends AbstractFhirTestSupport {
     @Test
     public void testOfType() throws Exception {
         org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OFTYPE", CapabilityStatement.class);
+
+        LOG.debug("ofType: " + result);
         assertNotNull("ofType result", result);
         assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement)result).getStatus());
-        LOG.debug("ofType: " + result);
     }
 
     @Override

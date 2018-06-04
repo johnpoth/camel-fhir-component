@@ -4,17 +4,21 @@
  */
 package org.apache.camel.component.fhir;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirTransactionApiMethod;
-import org.junit.Ignore;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirTransaction} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirTransactionIntegrationTest extends AbstractFhirTestSupport {
@@ -22,37 +26,43 @@ public class FhirTransactionIntegrationTest extends AbstractFhirTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FhirTransactionIntegrationTest.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirTransactionApiMethod.class).getName();
 
-    // TODO provide parameter values for withBundle
-    @Ignore
     @Test
     public void testWithBundle() throws Exception {
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
-        final org.hl7.fhir.instance.model.api.IBaseBundle result = requestBody("direct://WITHBUNDLE", null);
+        Bundle result = requestBody("direct://WITH_BUNDLE", createTransactionBundle());
 
         assertNotNull("withBundle result", result);
+        assertTrue(result.getEntry().get(0).getResponse().getStatus().contains("Created"));
         LOG.debug("withBundle: " + result);
     }
 
-    // TODO provide parameter values for withBundle
-    @Ignore
     @Test
-    public void testWithBundle_1() throws Exception {
+    public void testWithStringBundle() throws Exception {
+        Bundle transactionBundle = createTransactionBundle();
+        String stringBundle = fhirContext.newJsonParser().encodeResourceToString(transactionBundle);
+
         // using String message body for single parameter "sBundle"
-        final String result = requestBody("direct://WITHBUNDLE_1", null);
+        final String result = requestBody("direct://WITH_STRING_BUNDLE", stringBundle);
 
         assertNotNull("withBundle result", result);
+        assertTrue(result.contains("Bundle"));
         LOG.debug("withBundle: " + result);
     }
 
-    // TODO provide parameter values for withResources
-    @Ignore
     @Test
     public void testWithResources() throws Exception {
+        Patient oscar = new Patient().addName(new HumanName().addGiven("Oscar").setFamily("Peterson"));
+        Patient bobbyHebb      = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
+        List<IBaseResource> patients = new ArrayList<>(2);
+        patients.add(oscar);
+        patients.add(bobbyHebb);
+
         // using java.util.List message body for single parameter "resources"
-        final java.util.List result = requestBody("direct://WITHRESOURCES", null);
+        List<IBaseResource> result = requestBody("direct://WITH_RESOURCES", patients);
 
         assertNotNull("withResources result", result);
         LOG.debug("withResources: " + result);
+        assertTrue(result.size() == 2 );
     }
 
     @Override
@@ -60,18 +70,29 @@ public class FhirTransactionIntegrationTest extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for withBundle
-                from("direct://WITHBUNDLE")
+                from("direct://WITH_BUNDLE")
                     .to("fhir://" + PATH_PREFIX + "/withBundle?inBody=bundle");
 
                 // test route for withBundle
-                from("direct://WITHBUNDLE_1")
-                    .to("fhir://" + PATH_PREFIX + "/withBundle?inBody=sBundle");
+                from("direct://WITH_STRING_BUNDLE")
+                    .to("fhir://" + PATH_PREFIX + "/withBundle?inBody=stringBundle");
 
                 // test route for withResources
-                from("direct://WITHRESOURCES")
+                from("direct://WITH_RESOURCES")
                     .to("fhir://" + PATH_PREFIX + "/withResources?inBody=resources");
 
             }
         };
     }
+
+    private Bundle createTransactionBundle() {
+        Bundle input = new Bundle();
+        input.setType(Bundle.BundleType.TRANSACTION);
+        input.addEntry()
+            .setResource(new Patient().addName(new HumanName().addGiven("Art").setFamily("Tatum")))
+            .getRequest()
+            .setMethod(Bundle.HTTPVerb.POST);
+        return input;
+    }
+
 }

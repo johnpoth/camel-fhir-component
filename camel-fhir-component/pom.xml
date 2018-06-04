@@ -268,7 +268,7 @@
                   <fromJavadoc/>
                   <nullableOptions>
                     <nullableOption>id</nullableOption>
-                    <nullableOption>sId</nullableOption>
+                    <nullableOption>stringId</nullableOption>
                     <nullableOption>url</nullableOption>
                     <nullableOption>preferReturn</nullableOption>
                   </nullableOptions>

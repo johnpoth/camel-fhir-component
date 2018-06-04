@@ -7,14 +7,14 @@ package org.apache.camel.component.fhir;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirSearchApiMethod;
-import org.junit.Ignore;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirSearch} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirSearchIntegrationTest extends AbstractFhirTestSupport {
@@ -22,15 +22,16 @@ public class FhirSearchIntegrationTest extends AbstractFhirTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FhirSearchIntegrationTest.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirSearchApiMethod.class).getName();
 
-    // TODO provide parameter values for searchByUrl
-    @Ignore
     @Test
     public void testSearchByUrl() throws Exception {
-        // using String message body for single parameter "url"
-        final org.hl7.fhir.instance.model.api.IBaseBundle result = requestBody("direct://SEARCHBYURL", null);
+        String url = "Patient?given=Vincent&family=Freeman&_format=json";
+        Bundle result = requestBody("direct://SEARCH_BY_URL", url);
 
-        assertNotNull("searchByUrl result", result);
         LOG.debug("searchByUrl: " + result);
+        assertNotNull("searchByUrl result", result);
+        Patient patient = (Patient) result.getEntry().get(0).getResource();
+        assertNotNull(patient);
+        assertEquals("Freeman", patient.getName().get(0).getFamily());
     }
 
     @Override
@@ -38,7 +39,7 @@ public class FhirSearchIntegrationTest extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for searchByUrl
-                from("direct://SEARCHBYURL")
+                from("direct://SEARCH_BY_URL")
                     .to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
 
             }

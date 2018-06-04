@@ -45,9 +45,11 @@ public class FhirLoadPageIntegrationTest extends AbstractFhirTestSupport {
         headers.put("CamelFhir.url", nextPageLink);
         // parameter type is Class
         headers.put("CamelFhir.returnType", Bundle.class);
+
         IBaseBundle result = requestBodyAndHeaders("direct://BY_URL", null, headers);
-        assertNotNull("byUrl result", result);
+
         LOG.debug("byUrl: " + result);
+        assertNotNull("byUrl result", result);
     }
 
     @Test
@@ -76,10 +78,12 @@ public class FhirLoadPageIntegrationTest extends AbstractFhirTestSupport {
         String nextPageLink = bundle.getLink("next").getUrl();
         bundle = this.fhirClient.loadPage().byUrl(nextPageLink).andReturnBundle(Bundle.class).execute();
         assertNotNull(bundle.getLink(Bundle.LINK_PREV));
+
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
         Bundle result = requestBody("direct://PREVIOUS", bundle);
-        assertNotNull("previous result", result);
+
         LOG.debug("previous: " + result);
+        assertNotNull("previous result", result);
     }
 
     @Before

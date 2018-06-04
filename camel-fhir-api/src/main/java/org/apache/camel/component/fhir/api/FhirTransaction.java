@@ -33,7 +33,7 @@ public class FhirTransaction {
     /**
      * Use the given raw text (should be a Bundle resource) as the transaction input
      */
-    public String withBundle(String sBundle) {
-        return client.transaction().withBundle(sBundle).execute();
+    public String withBundle(String stringBundle) {
+        return client.transaction().withBundle(stringBundle).execute();
     }
 }
