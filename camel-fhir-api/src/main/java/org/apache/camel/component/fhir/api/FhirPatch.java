@@ -29,7 +29,6 @@ public class FhirPatch {
      *                         or suppress the resource body as a part of the result. If a resource is returned by the server
      *                         it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}
      *
-     * @return
      */
     public MethodOutcome patchByUrl(String patchBody, String url, PreferReturnEnum preferReturn) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).conditionalByUrl(url);
@@ -48,7 +47,6 @@ public class FhirPatch {
      * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                         or suppress the resource body as a part of the result. If a resource is returned by the server
      *                         it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}
-     * @return
      */
     public MethodOutcome patchById(String patchBody, IIdType id, PreferReturnEnum preferReturn) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).withId(id);
@@ -67,7 +65,6 @@ public class FhirPatch {
      * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                         or suppress the resource body as a part of the result. If a resource is returned by the server
      *                         it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}
-     * @return
      */
     public MethodOutcome patchById(String patchBody, String stringId, PreferReturnEnum preferReturn) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).withId(stringId);

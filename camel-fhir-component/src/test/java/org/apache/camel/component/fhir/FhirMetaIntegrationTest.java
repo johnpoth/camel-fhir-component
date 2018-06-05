@@ -9,10 +9,8 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirMetaApiMethod;
-import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Meta;
 import org.hl7.fhir.instance.model.api.IBaseMetaType;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +31,7 @@ public class FhirMetaIntegrationTest extends AbstractFhirTestSupport {
         assertEquals(0, meta.getTag().size());
         Meta inMeta = new Meta();
         inMeta.addTag().setSystem("urn:system1").setCode("urn:code1");
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is org.hl7.fhir.instance.model.api.IBaseMetaType
         headers.put("CamelFhir.meta", inMeta);
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
