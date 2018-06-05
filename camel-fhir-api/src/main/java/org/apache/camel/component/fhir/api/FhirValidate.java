@@ -19,7 +19,7 @@ public class FhirValidate {
         return client.validate().resource(resource).execute();
     }
 
-    public MethodOutcome resource(String sResource) {
-        return client.validate().resource(sResource).execute();
+    public MethodOutcome resource(String resourceAsString) {
+        return client.validate().resource(resourceAsString).execute();
     }
 }

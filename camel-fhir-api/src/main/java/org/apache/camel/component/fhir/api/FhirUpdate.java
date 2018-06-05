@@ -4,7 +4,6 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.PreferReturnEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IUpdateExecutable;
-import ca.uhn.fhir.rest.gclient.IUpdateTyped;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
@@ -19,35 +18,40 @@ public class FhirUpdate {
         this.client = client;
     }
 
-    public MethodOutcome resource(IBaseResource resource, IIdType id, String stringId, String url, PreferReturnEnum preferReturn){
-        IUpdateTyped updateTyped = client.update().resource(resource);
-        return processOptionalParams(id, stringId, url, preferReturn, updateTyped);
+    public MethodOutcome resource(IBaseResource resource, IIdType id, PreferReturnEnum preferReturn){
+        IUpdateExecutable updateExecutable = client.update().resource(resource).withId(id);
+        return processOptionalParam(preferReturn, updateExecutable);
     }
 
-    public MethodOutcome resource(String sResource, IIdType id, String stringId, String url, PreferReturnEnum preferReturn){
-        IUpdateTyped updateTyped = client.update().resource(sResource);
-        return processOptionalParams(id, stringId, url, preferReturn, updateTyped);
+    public MethodOutcome resource(String resourceAsString, IIdType id, PreferReturnEnum preferReturn){
+        IUpdateExecutable updateExecutable = client.update().resource(resourceAsString).withId(id);
+        return processOptionalParam(preferReturn, updateExecutable);
     }
 
-    private MethodOutcome processOptionalParams(IIdType id, String stringId, String url, PreferReturnEnum preferReturn, IUpdateTyped updateTyped) {
-        if(url != null) {
-            updateTyped = updateTyped.conditionalByUrl(url);
-            if (preferReturn != null) {
-                return updateTyped.prefer(preferReturn).execute();
-            }
+    public MethodOutcome resource(IBaseResource resource, String stringId, PreferReturnEnum preferReturn){
+        IUpdateExecutable updateExecutable = client.update().resource(resource).withId(stringId);
+        return processOptionalParam(preferReturn, updateExecutable);
+    }
+
+    public MethodOutcome resource(String resourceAsString, String stringId, PreferReturnEnum preferReturn){
+        IUpdateExecutable updateExecutable = client.update().resource(resourceAsString).withId(stringId);
+        return processOptionalParam(preferReturn, updateExecutable);
+    }
+
+    public MethodOutcome resourceBySearchUrl(IBaseResource resource, String url, PreferReturnEnum preferReturn){
+        IUpdateExecutable updateExecutable = client.update().resource(resource).conditionalByUrl(url);
+        return processOptionalParam(preferReturn, updateExecutable);
+    }
+
+    public MethodOutcome resourceBySearchUrl(String resourceAsString, String url, PreferReturnEnum preferReturn){
+        IUpdateExecutable updateExecutable = client.update().resource(resourceAsString).conditionalByUrl(url);
+        return processOptionalParam(preferReturn, updateExecutable);
+    }
+
+    private MethodOutcome processOptionalParam(PreferReturnEnum preferReturn, IUpdateExecutable updateExecutable) {
+        if (preferReturn != null) {
+            return updateExecutable.prefer(preferReturn).execute();
         }
-        else if (id != null) {
-            IUpdateExecutable updateExecutable = updateTyped.withId(id);
-            if (preferReturn != null) {
-               return updateExecutable.prefer(preferReturn).execute();
-            }
-        }
-        else if (stringId !=null){
-            IUpdateExecutable updateExecutable = updateTyped.withId(id);
-            if (preferReturn != null) {
-                return updateExecutable.prefer(preferReturn).execute();
-            }
-        }
-        return updateTyped.execute();
+        return updateExecutable.execute();
     }
 }
