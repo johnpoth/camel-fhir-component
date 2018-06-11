@@ -6,7 +6,7 @@ import org.apache.camel.util.component.AbstractApiConsumer;
 import org.apache.camel.component.fhir.internal.FhirApiName;
 
 /**
- * The fhir consumer.
+ * The FHIR consumer.
  */
 public class FhirConsumer extends AbstractApiConsumer<FhirApiName, FhirConfiguration> {
 

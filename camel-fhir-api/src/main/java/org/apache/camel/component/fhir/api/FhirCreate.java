@@ -1,5 +1,6 @@
 package org.apache.camel.component.fhir.api;
 
+import java.util.Map;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.PreferReturnEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -26,11 +27,13 @@ public class FhirCreate {
      * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                  or suppress the resource body as a part of the result. If a resource is returned by the server
      *                  it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}, may be null
+     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed
      * @return The {@link MethodOutcome}
      */
-    public MethodOutcome resource(IBaseResource resource, String url, PreferReturnEnum preferReturn) {
+    public MethodOutcome resource(IBaseResource resource, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         ICreateTyped createTyped = client.create().resource(resource);
         createTyped = processOptionalParams(url, preferReturn, createTyped);
+        createTyped = ExtraParameters.process(extraParameters, createTyped);
         return createTyped.execute();
     }
 
@@ -43,11 +46,13 @@ public class FhirCreate {
      * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                  or suppress the resource body as a part of the result. If a resource is returned by the server
      *                  it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}, may be null
+     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed
      * @return The {@link MethodOutcome}
      */
-    public MethodOutcome resource(String resourceAsString, String url, PreferReturnEnum preferReturn) {
+    public MethodOutcome resource(String resourceAsString, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         ICreateTyped createTyped = client.create().resource(resourceAsString);
         createTyped = processOptionalParams(url, preferReturn, createTyped);
+        createTyped = ExtraParameters.process(extraParameters, createTyped);
         return createTyped.execute();
     }
 

@@ -11,8 +11,8 @@
 
   <artifactId>camel-fhir</artifactId>
   <packaging>jar</packaging>
-  <name>Camel fhir Component</name>
-  <description>Camel Component for fhir</description>
+  <name>Camel :: FHIR</name>
+  <description>Camel Component for FHIR</description>
 
   <properties>
     <schemeName>fhir</schemeName>
@@ -193,6 +193,9 @@
                   <apiName>capabilities</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirCapabilities</proxyClass>
                   <fromSignatureFile>signatures/capabilities-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>extraParameters</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>create</apiName>
@@ -201,6 +204,7 @@
                   <nullableOptions>
                     <nullableOption>url</nullableOption>
                     <nullableOption>preferReturn</nullableOption>
+                    <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>

@@ -5,7 +5,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 import org.apache.camel.component.fhir.FhirConfiguration;
 
 /**
- * Singleton {@link ApiMethodPropertiesHelper} for fhir component.
+ * Singleton {@link ApiMethodPropertiesHelper} for FHIR component.
  */
 public final class FhirPropertiesHelper extends ApiMethodPropertiesHelper<FhirConfiguration> {
 

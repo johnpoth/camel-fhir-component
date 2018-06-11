@@ -15,4 +15,4 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 
-<T extends org.hl7.fhir.instance.model.api.IBaseConformance> T ofType(Class<T> type);
+<T extends org.hl7.fhir.instance.model.api.IBaseConformance> T ofType(Class<T> type, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,java.lang.Object> extraParameters);

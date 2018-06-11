@@ -6,7 +6,7 @@ import org.apache.camel.component.fhir.internal.FhirApiName;
 import org.apache.camel.component.fhir.internal.FhirPropertiesHelper;
 
 /**
- * The Fhir producer.
+ * The FHIR producer.
  */
 public class FhirProducer extends AbstractApiProducer<FhirApiName, FhirConfiguration> {
 

@@ -1,5 +1,6 @@
 package org.apache.camel.component.fhir;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -9,6 +10,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.api.FhirCapabilities;
 import org.apache.camel.component.fhir.api.FhirCreate;
 import org.apache.camel.component.fhir.api.FhirDelete;
@@ -35,7 +37,7 @@ import org.apache.camel.component.fhir.internal.FhirConstants;
 import org.apache.camel.component.fhir.internal.FhirPropertiesHelper;
 
 /**
- * Represents a Fhir endpoint.
+ * Represents a FHIR endpoint.
  */
 @UriEndpoint(firstVersion = "1.0-SNAPSHOT", scheme = "fhir", title = "FHIR", syntax="fhir:apiName/methodName",
              consumerClass = FhirConsumer.class, label = "api")
@@ -123,6 +125,26 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
             default:
                 throw new IllegalArgumentException("Invalid API name " + apiName);
         }
+    }
+
+    @Override
+    public void interceptProperties(Map<String, Object> properties) {
+        Map<ExtraParameters, Object> extraProperties = getExtraParameters(properties);
+        for (ExtraParameters extraParameter : ExtraParameters.values()) {
+            Object value = properties.get(extraParameter.getParam());
+            if (value != null) {
+                extraProperties.put(ExtraParameters.ENCODE_JSON, value);
+            }
+        }
+        properties.put("extraParameters", extraProperties);
+
+    }
+
+    private Map<ExtraParameters, Object> getExtraParameters(Map<String, Object> properties) {
+        if (properties.get("extraParamters") == null) {
+            return new HashMap<>();
+        }
+        return (Map<ExtraParameters, Object>) properties.get("extraParamters");
     }
 
     private void initRestClient() {

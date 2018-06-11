@@ -4,7 +4,10 @@
  */
 package org.apache.camel.component.fhir;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCapabilitiesApiMethod;
 import org.hl7.fhir.dstu3.model.CapabilityStatement;
@@ -24,7 +27,19 @@ public class FhirCapabilitiesIntegrationTest extends AbstractFhirTestSupport {
 
     @Test
     public void testOfType() throws Exception {
-        org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OFTYPE", CapabilityStatement.class);
+        org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OF_TYPE", CapabilityStatement.class);
+
+        LOG.debug("ofType: " + result);
+        assertNotNull("ofType result", result);
+        assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement)result).getStatus());
+    }
+
+    @Test
+    public void testEncodeJSON() throws Exception {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ExtraParameters.ENCODE_JSON.getHeaderName(), Boolean.TRUE);
+
+        org.hl7.fhir.instance.model.api.IBaseConformance result = requestBodyAndHeaders("direct://OF_TYPE", CapabilityStatement.class, headers);
 
         LOG.debug("ofType: " + result);
         assertNotNull("ofType result", result);
@@ -36,7 +51,7 @@ public class FhirCapabilitiesIntegrationTest extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for ofType
-                from("direct://OFTYPE")
+                from("direct://OF_TYPE")
                     .to("fhir://" + PATH_PREFIX + "/ofType?inBody=type");
 
             }

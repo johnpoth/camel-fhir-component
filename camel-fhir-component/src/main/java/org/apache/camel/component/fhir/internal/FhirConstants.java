@@ -1,7 +1,7 @@
 package org.apache.camel.component.fhir.internal;
 
 /**
- * Constants for fhir component.
+ * Constants for FHIR component.
  */
 public interface FhirConstants {
 
