@@ -6,7 +6,9 @@ package org.apache.camel.component.fhir;
 
 import java.util.HashMap;
 import java.util.Map;
+import ca.uhn.fhir.rest.api.CacheControlDirective;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirDeleteApiMethod;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
@@ -68,6 +70,19 @@ public class FhirDeleteIntegrationTest extends AbstractFhirTestSupport {
         assertTrue(patientExists());
 
         IBaseOperationOutcome result = requestBody("direct://RESOURCE_CONDITIONAL_BY_URL", "Patient?given=Vincent&family=Freeman");
+
+        LOG.debug("resourceConditionalByUrl: " + result);
+        assertNotNull("resourceConditionalByUrl result", result);
+        assertFalse(patientExists());
+    }
+
+    @Test
+    public void testDeleteResourceConditionalByUrlCacheControlDirective() throws Exception {
+        assertTrue(patientExists());
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ExtraParameters.CACHE_CONTROL_DIRECTIVE.getHeaderName(), new CacheControlDirective().setNoCache(true));
+
+        IBaseOperationOutcome result = requestBodyAndHeaders("direct://RESOURCE_CONDITIONAL_BY_URL", "Patient?given=Vincent&family=Freeman", headers);
 
         LOG.debug("resourceConditionalByUrl: " + result);
         assertNotNull("resourceConditionalByUrl result", result);

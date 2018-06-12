@@ -1,7 +1,9 @@
 package org.apache.camel.component.fhir.api;
 
+import java.util.Map;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.gclient.IValidateUntyped;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
 /**
@@ -15,11 +17,15 @@ public class FhirValidate {
         this.client = client;
     }
 
-    public MethodOutcome resource(IBaseResource resource) {
-        return client.validate().resource(resource).execute();
+    public MethodOutcome resource(IBaseResource resource, Map<ExtraParameters, Object> extraParameters) {
+        IValidateUntyped validateUntyped = client.validate().resource(resource);
+        ExtraParameters.process(extraParameters, validateUntyped);
+        return validateUntyped.execute();
     }
 
-    public MethodOutcome resource(String resourceAsString) {
-        return client.validate().resource(resourceAsString).execute();
+    public MethodOutcome resource(String resourceAsString, Map<ExtraParameters, Object> extraParameters) {
+        IValidateUntyped validateUntyped = client.validate().resource(resourceAsString);
+        ExtraParameters.process(extraParameters, validateUntyped);
+        return validateUntyped.execute();
     }
 }

@@ -1,6 +1,7 @@
 package org.apache.camel.component.fhir.api;
 
 import java.util.Date;
+import java.util.Map;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IHistoryTyped;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
@@ -27,11 +28,13 @@ public class FhirHistory {
      * @param count Request that the server return only up to <code>theCount</code> number of resources, may be NULL
      * @param cutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @param iCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
+     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @return the {@link IBaseBundle}
      */
-    public <T extends IBaseBundle> T onServer(Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff) {
+    public <T extends IBaseBundle> T onServer(Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff, Map<ExtraParameters, Object> extraParameters) {
         IHistoryTyped<T> tiHistoryTyped = client.history().onServer().andReturnBundle(returnType);
-        tiHistoryTyped = processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
+        processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
+        ExtraParameters.process(extraParameters, tiHistoryTyped);
         return tiHistoryTyped.execute();
     }
 
@@ -44,11 +47,13 @@ public class FhirHistory {
      * @param count Request that the server return only up to <code>theCount</code> number of resources, may be NULL
      * @param cutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @param iCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
+     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @return the {@link IBaseBundle}
      */
-    public <T extends IBaseBundle> T onType(Class<IBaseResource> resourceType, Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff) {
+    public <T extends IBaseBundle> T onType(Class<IBaseResource> resourceType, Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff, Map<ExtraParameters, Object> extraParameters) {
         IHistoryTyped<T> tiHistoryTyped = client.history().onType(resourceType).andReturnBundle(returnType);
-        tiHistoryTyped = processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
+        processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
+        ExtraParameters.process(extraParameters, tiHistoryTyped);
         return tiHistoryTyped.execute();
     }
 
@@ -62,26 +67,26 @@ public class FhirHistory {
      * @param count Request that the server return only up to <code>theCount</code> number of resources, may be NULL
      * @param cutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
      * @param iCutoff Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL
+     *  @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @throws IllegalArgumentException If <code>theId</code> does not contain at least a resource type and ID
      * @return the {@link IBaseBundle}
      */
-    public <T extends IBaseBundle> T onInstance(IIdType id, Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff) {
+    public <T extends IBaseBundle> T onInstance(IIdType id, Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff, Map<ExtraParameters, Object> extraParameters) {
         IHistoryTyped<T> tiHistoryTyped = client.history().onInstance(id).andReturnBundle(returnType);
-        tiHistoryTyped = processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
+        processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
+        ExtraParameters.process(extraParameters, tiHistoryTyped);
         return tiHistoryTyped.execute();
     }
 
-    private <T extends IBaseBundle> IHistoryTyped<T> processOptionalParams(Integer count, Date theCutoff, IPrimitiveType<Date> cutoff, IHistoryTyped<T> tiHistoryTyped) {
-        if ( count != null) {
-            tiHistoryTyped = tiHistoryTyped.count(count);
-        }
-        if (theCutoff != null) {
-            tiHistoryTyped = tiHistoryTyped.since(theCutoff);
-        }
-        if (cutoff != null){
-            tiHistoryTyped = tiHistoryTyped.since(cutoff);
-        }
-        return tiHistoryTyped;
+    private <T extends IBaseBundle> void processOptionalParams(Integer count, Date theCutoff, IPrimitiveType<Date> cutoff, IHistoryTyped<T> tiHistoryTyped) {
+        if (count != null)
+            tiHistoryTyped.count(count);
+
+        if (theCutoff != null)
+            tiHistoryTyped.since(theCutoff);
+
+        if (cutoff != null)
+            tiHistoryTyped.since(cutoff);
     }
 
 }

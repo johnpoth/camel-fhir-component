@@ -4,8 +4,11 @@
  */
 package org.apache.camel.component.fhir;
 
+import java.util.HashMap;
+import java.util.Map;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
 import org.hl7.fhir.dstu3.model.HumanName;
@@ -40,6 +43,19 @@ public class FhirCreateIntegrationTest extends AbstractFhirTestSupport {
         String patientString = this.fhirContext.newXmlParser().encodeResourceToString(patient);
 
         MethodOutcome result = requestBody("direct://RESOURCE_STRING", patientString);
+
+        LOG.debug("resource: " + result);
+        assertNotNull("resource result", result);
+        assertTrue(result.getCreated());
+    }
+
+    @Test
+    public void testCreateStringResourceEncodeXml() throws Exception {
+        Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
+        String patientString = this.fhirContext.newXmlParser().encodeResourceToString(patient);
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ExtraParameters.ENCODE_XML.getHeaderName(), Boolean.TRUE);
+        MethodOutcome result = requestBodyAndHeaders("direct://RESOURCE_STRING", patientString, headers);
 
         LOG.debug("resource: " + result);
         assertNotNull("resource result", result);

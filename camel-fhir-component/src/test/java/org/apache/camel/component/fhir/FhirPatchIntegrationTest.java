@@ -4,13 +4,17 @@
  */
 package org.apache.camel.component.fhir;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirPatchApiMethod;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,6 +55,24 @@ public class FhirPatchIntegrationTest extends AbstractFhirTestSupport {
         headers.put("CamelFhir.stringId", this.patient.getId());
         // parameter type is ca.uhn.fhir.rest.api.PreferReturnEnum
         headers.put("CamelFhir.preferReturn", null);
+
+        MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_SID", null, headers);
+        assertActive(result);
+    }
+
+    @Test
+    public void testPatchByStringIdPreferResponseTypes() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        // parameter type is String
+        headers.put("CamelFhir.patchBody", PATCH);
+        // parameter type is String
+        headers.put("CamelFhir.stringId", this.patient.getId());
+        // parameter type is ca.uhn.fhir.rest.api.PreferReturnEnum
+        headers.put("CamelFhir.preferReturn", null);
+
+        List<Class<? extends IBaseResource>> preferredResponseTypes = new ArrayList<>();
+        preferredResponseTypes.add(Patient.class);
+        headers.put(ExtraParameters.PREFER_RESPONSE_TYPES.getHeaderName(), preferredResponseTypes);
 
         MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_SID", null, headers);
         assertActive(result);

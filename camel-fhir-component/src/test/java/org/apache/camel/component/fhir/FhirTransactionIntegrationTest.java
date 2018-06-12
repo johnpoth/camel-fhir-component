@@ -5,8 +5,12 @@
 package org.apache.camel.component.fhir;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import ca.uhn.fhir.rest.api.SummaryEnum;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirTransactionApiMethod;
 import org.hl7.fhir.dstu3.model.Bundle;
@@ -59,6 +63,24 @@ public class FhirTransactionIntegrationTest extends AbstractFhirTestSupport {
 
         // using java.util.List message body for single parameter "resources"
         List<IBaseResource> result = requestBody("direct://WITH_RESOURCES", patients);
+
+        assertNotNull("withResources result", result);
+        LOG.debug("withResources: " + result);
+        assertTrue(result.size() == 2 );
+    }
+
+    @Test
+    public void testWithResourcesSummaryEnum() throws Exception {
+        Patient oscar = new Patient().addName(new HumanName().addGiven("Oscar").setFamily("Peterson"));
+        Patient bobbyHebb      = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
+        List<IBaseResource> patients = new ArrayList<>(2);
+        patients.add(oscar);
+        patients.add(bobbyHebb);
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put(ExtraParameters.SUMMARY_ENUM.getHeaderName(), SummaryEnum.DATA);
+
+        // using java.util.List message body for single parameter "resources"
+        List<IBaseResource> result = requestBodyAndHeaders("direct://WITH_RESOURCES", patients, headers);
 
         assertNotNull("withResources result", result);
         LOG.debug("withResources: " + result);

@@ -14,4 +14,4 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-<R extends org.hl7.fhir.instance.model.api.IBaseResource> R messageBundle(org.hl7.fhir.instance.model.api.IBaseBundle theMsgBundle, Class<R> theResponseClass);
+<R extends org.hl7.fhir.instance.model.api.IBaseResource> R messageBundle(org.hl7.fhir.instance.model.api.IBaseBundle theMsgBundle, Class<R> theResponseClass, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,java.lang.Object> extraParameters);

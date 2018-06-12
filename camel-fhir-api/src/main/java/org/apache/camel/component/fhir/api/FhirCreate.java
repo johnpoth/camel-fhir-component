@@ -27,13 +27,13 @@ public class FhirCreate {
      * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                  or suppress the resource body as a part of the result. If a resource is returned by the server
      *                  it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}, may be null
-     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed
+     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @return The {@link MethodOutcome}
      */
     public MethodOutcome resource(IBaseResource resource, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         ICreateTyped createTyped = client.create().resource(resource);
-        createTyped = processOptionalParams(url, preferReturn, createTyped);
-        createTyped = ExtraParameters.process(extraParameters, createTyped);
+        processOptionalParams(url, preferReturn, createTyped);
+        ExtraParameters.process(extraParameters, createTyped);
         return createTyped.execute();
     }
 
@@ -46,23 +46,21 @@ public class FhirCreate {
      * @param preferReturn Add a <code>Prefer</code> header to the request, which requests that the server include
      *                  or suppress the resource body as a part of the result. If a resource is returned by the server
      *                  it will be parsed an accessible to the client via {@link MethodOutcome#getResource()}, may be null
-     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed
+     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @return The {@link MethodOutcome}
      */
     public MethodOutcome resource(String resourceAsString, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         ICreateTyped createTyped = client.create().resource(resourceAsString);
-        createTyped = processOptionalParams(url, preferReturn, createTyped);
-        createTyped = ExtraParameters.process(extraParameters, createTyped);
+        processOptionalParams(url, preferReturn, createTyped);
+        ExtraParameters.process(extraParameters, createTyped);
         return createTyped.execute();
     }
 
-    private ICreateTyped processOptionalParams(String theSearchUrl, PreferReturnEnum theReturn, ICreateTyped createTyped) {
-        if (theSearchUrl != null) {
-            createTyped = createTyped.conditionalByUrl(theSearchUrl);
-        }
-        if (theReturn != null) {
-            createTyped = createTyped.prefer(theReturn);
-        }
-        return createTyped;
+    private void processOptionalParams(String theSearchUrl, PreferReturnEnum theReturn, ICreateTyped createTyped) {
+        if (theSearchUrl != null)
+            createTyped.conditionalByUrl(theSearchUrl);
+
+        if (theReturn != null)
+            createTyped.prefer(theReturn);
     }
 }

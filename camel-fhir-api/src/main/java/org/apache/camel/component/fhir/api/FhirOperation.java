@@ -1,5 +1,6 @@
 package org.apache.camel.component.fhir.api;
 
+import java.util.Map;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IBaseOn;
 import ca.uhn.fhir.rest.gclient.IOperationProcessMsg;
@@ -19,7 +20,7 @@ public class FhirOperation {
         this.client = client;
     }
 
-    public <R extends IBaseResource> R messageBundle(IBaseBundle theMsgBundle, Class<R> theResponseClass) {
+    public <R extends IBaseResource> R messageBundle(IBaseBundle theMsgBundle, Class<R> theResponseClass, Map<ExtraParameters, Object> extraParameters) {
         return client.operation().processMessage().setMessageBundle(theMsgBundle).synchronous(theResponseClass).execute();
     }
 

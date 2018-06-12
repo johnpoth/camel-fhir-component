@@ -6,7 +6,7 @@ import ca.uhn.fhir.rest.gclient.IFetchConformanceTyped;
 import org.hl7.fhir.instance.model.api.IBaseConformance;
 
 /**
- * Fetch the capability statement for the server
+ * API to Fetch the capability statement for the server
  */
 public class FhirCapabilities {
 
@@ -21,7 +21,7 @@ public class FhirCapabilities {
      */
     public <T extends IBaseConformance> T ofType(Class<T> type, Map<ExtraParameters, Object> extraParameters) {
         IFetchConformanceTyped<T> fetchConformanceTyped = client.capabilities().ofType(type);
-        fetchConformanceTyped = ExtraParameters.process(extraParameters, fetchConformanceTyped);
+        ExtraParameters.process(extraParameters, fetchConformanceTyped);
         return fetchConformanceTyped.execute();
     }
 

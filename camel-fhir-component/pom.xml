@@ -211,6 +211,9 @@
                   <apiName>delete</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirDelete</proxyClass>
                   <fromJavadoc/>
+                  <nullableOptions>
+                    <nullableOption>extraParameters</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>history</apiName>
@@ -220,22 +223,32 @@
                     <nullableOption>count</nullableOption>
                     <nullableOption>cutoff</nullableOption>
                     <nullableOption>iCutoff</nullableOption>
+                    <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
                   <apiName>load-page</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirLoadPage</proxyClass>
                   <fromSignatureFile>signatures/load-page-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>extraParameters</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>meta</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirMeta</proxyClass>
                   <fromSignatureFile>signatures/meta-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>extraParameters</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>operation</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirOperation</proxyClass>
                   <fromSignatureFile>signatures/operation-sig-api.txt</fromSignatureFile>
+                  <nullableOptions>
+                    <nullableOption>extraParameters</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>patch</apiName>
@@ -243,6 +256,7 @@
                   <fromJavadoc/>
                   <nullableOptions>
                     <nullableOption>preferReturn</nullableOption>
+                    <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
@@ -254,17 +268,24 @@
                     <nullableOption>returnNull</nullableOption>
                     <nullableOption>returnResource</nullableOption>
                     <nullableOption>throwError</nullableOption>
+                    <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
                   <apiName>search</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirSearch</proxyClass>
                   <fromJavadoc/>
+                  <nullableOptions>
+                    <nullableOption>extraParameters</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>transaction</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirTransaction</proxyClass>
                   <fromJavadoc/>
+                  <nullableOptions>
+                    <nullableOption>extraParameters</nullableOption>
+                  </nullableOptions>
                 </api>
                 <api>
                   <apiName>update</apiName>
@@ -272,12 +293,16 @@
                   <fromJavadoc/>
                   <nullableOptions>
                     <nullableOption>preferReturn</nullableOption>
+                    <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
                   <apiName>validate</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirValidate</proxyClass>
                   <fromJavadoc/>
+                  <nullableOptions>
+                    <nullableOption>extraParameters</nullableOption>
+                  </nullableOptions>
                 </api>
               </apis>
             </configuration>

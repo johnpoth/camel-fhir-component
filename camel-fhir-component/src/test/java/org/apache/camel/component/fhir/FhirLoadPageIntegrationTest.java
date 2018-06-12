@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import ca.uhn.fhir.rest.api.EncodingEnum;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirLoadPageApiMethod;
 import org.hl7.fhir.dstu3.model.Bundle;
@@ -81,6 +83,27 @@ public class FhirLoadPageIntegrationTest extends AbstractFhirTestSupport {
 
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
         Bundle result = requestBody("direct://PREVIOUS", bundle);
+
+        LOG.debug("previous: " + result);
+        assertNotNull("previous result", result);
+    }
+
+    @Test
+    public void testPreviousWithEncodingEnum() throws Exception {
+        String url = "Patient?_count=2";
+        Bundle bundle = this.fhirClient.search()
+                .byUrl(url)
+                .returnBundle(Bundle.class).execute();
+        assertNotNull(bundle.getLink(Bundle.LINK_NEXT));
+
+        String nextPageLink = bundle.getLink("next").getUrl();
+        bundle = this.fhirClient.loadPage().byUrl(nextPageLink).andReturnBundle(Bundle.class).execute();
+        assertNotNull(bundle.getLink(Bundle.LINK_PREV));
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ExtraParameters.ENCODING_ENUM.getHeaderName(), EncodingEnum.XML);
+
+        // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
+        Bundle result = requestBodyAndHeaders("direct://PREVIOUS", bundle, headers);
 
         LOG.debug("previous: " + result);
         assertNotNull("previous result", result);

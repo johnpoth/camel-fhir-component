@@ -14,6 +14,6 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T next(T bundle);
-<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T previous(T bundle);
-<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T byUrl(String url, Class<T> returnType);
+<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T next(T bundle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,java.lang.Object> extraParameters);
+<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T previous(T bundle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,java.lang.Object> extraParameters);
+<T extends org.hl7.fhir.instance.model.api.IBaseBundle> T byUrl(String url, Class<T> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,java.lang.Object> extraParameters);

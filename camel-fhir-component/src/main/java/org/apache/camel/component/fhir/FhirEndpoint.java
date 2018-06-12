@@ -47,6 +47,7 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
     private String name;
 
     private Object apiProxy;
+    private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";
 
     public FhirEndpoint(String uri, FhirComponent component,
                         FhirApiName apiName, String methodName, FhirConfiguration endpointConfiguration) {
@@ -133,18 +134,19 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
         for (ExtraParameters extraParameter : ExtraParameters.values()) {
             Object value = properties.get(extraParameter.getParam());
             if (value != null) {
-                extraProperties.put(ExtraParameters.ENCODE_JSON, value);
+                extraProperties.put(extraParameter, value);
             }
         }
-        properties.put("extraParameters", extraProperties);
+        properties.put(EXTRA_PARAMETERS_PROPERTY, extraProperties);
 
     }
 
     private Map<ExtraParameters, Object> getExtraParameters(Map<String, Object> properties) {
-        if (properties.get("extraParamters") == null) {
+        Object extraParameters = properties.get(EXTRA_PARAMETERS_PROPERTY);
+        if (extraParameters == null) {
             return new HashMap<>();
         }
-        return (Map<ExtraParameters, Object>) properties.get("extraParamters");
+        return (Map<ExtraParameters, Object>) extraParameters;
     }
 
     private void initRestClient() {

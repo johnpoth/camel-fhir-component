@@ -43,25 +43,28 @@ public class FhirConfiguration {
    private EncodingEnum encodingEnum;
 
    @UriParam
+   @Metadata(description = "Will encode the request to JSON")
    private boolean encodeJson;
 
    @UriParam
+   @Metadata(description = "Will encode the request to XML")
    private boolean encodeXml;
 
    @UriParam
    @Metadata(description ="Explicitly specify a custom structure type to attempt to use when parsing the response. This"
            + " is useful for invocations where the response is a Bundle/Parameters containing nested resources,"
            + " and you want to use specific custom structures for those nested resources.")
-   private Class<? extends IBaseResource> preferedResponseType;
+   private Class<? extends IBaseResource> preferredResponseType;
 
    @UriParam
    @Metadata(description ="Explicitly specify a list of custom structure types to attempt to use (in order from most to"
            + " least preferred) when parsing the response. This"
            + " is useful for invocations where the response is a Bundle/Parameters containing nested resources,"
            + " and you want to use specific custom structures for those nested resources.")
-   private List<Class<? extends IBaseResource>> preferedResponseTypes;
+   private List<Class<? extends IBaseResource>> preferredResponseTypes;
 
    @UriParam
+   @Metadata(description ="Pretty print the request")
    private boolean prettyPrint;
 
    @UriParam
@@ -140,20 +143,20 @@ public class FhirConfiguration {
       this.encodeXml = encodeXml;
    }
 
-   public Class<? extends IBaseResource> getPreferedResponseType() {
-      return preferedResponseType;
+   public Class<? extends IBaseResource> getPreferredResponseType() {
+      return preferredResponseType;
    }
 
-   public void setPreferedResponseType(Class<? extends IBaseResource> preferedResponseType) {
-      this.preferedResponseType = preferedResponseType;
+   public void setPreferredResponseType(Class<? extends IBaseResource> preferredResponseType) {
+      this.preferredResponseType = preferredResponseType;
    }
 
-   public List<Class<? extends IBaseResource>> getPreferedResponseTypes() {
-      return preferedResponseTypes;
+   public List<Class<? extends IBaseResource>> getPreferredResponseTypes() {
+      return preferredResponseTypes;
    }
 
-   public void setPreferedResponseTypes(List<Class<? extends IBaseResource>> preferedResponseTypes) {
-      this.preferedResponseTypes = preferedResponseTypes;
+   public void setPreferredResponseTypes(List<Class<? extends IBaseResource>> preferredResponseTypes) {
+      this.preferredResponseTypes = preferredResponseTypes;
    }
 
    public boolean isPrettyPrint() {

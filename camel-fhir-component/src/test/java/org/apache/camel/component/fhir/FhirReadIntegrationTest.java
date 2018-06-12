@@ -7,6 +7,7 @@ package org.apache.camel.component.fhir;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirReadApiMethod;
 import org.hl7.fhir.dstu3.model.IdType;
@@ -178,6 +179,20 @@ public class FhirReadIntegrationTest extends AbstractFhirTestSupport {
         headers.put("CamelFhir.resourceClass", "Patient");
         // parameter type is String
         headers.put("CamelFhir.url", this.patient.getId());
+
+        Patient result = requestBodyAndHeaders("direct://RESOURCE_BY_URL_AND_STRING_RESOURCE", null, headers);
+
+        assertValidResponse(result);
+    }
+
+    @Test
+    public void testResourceByUrlAndStringResourcePrettyPrint() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        // parameter type is String
+        headers.put("CamelFhir.resourceClass", "Patient");
+        // parameter type is String
+        headers.put("CamelFhir.url", this.patient.getId());
+        headers.put(ExtraParameters.PRETTY_PRINT.getHeaderName(), Boolean.TRUE);
 
         Patient result = requestBodyAndHeaders("direct://RESOURCE_BY_URL_AND_STRING_RESOURCE", null, headers);
 

@@ -7,9 +7,11 @@ package org.apache.camel.component.fhir;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirMetaApiMethod;
 import org.hl7.fhir.dstu3.model.Meta;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseMetaType;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -105,6 +107,21 @@ public class FhirMetaIntegrationTest extends AbstractFhirTestSupport {
         headers.put("CamelFhir.theResourceName", "Patient");
 
         IBaseMetaType result = requestBodyAndHeaders("direct://GET_FROM_TYPE", null, headers);
+
+        LOG.debug("getFromType: " + result);
+        assertNotNull("getFromType result", result);
+    }
+
+    @Test
+    public void testGetFromTypePreferResponseType() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        // parameter type is Class
+        headers.put("CamelFhir.metaType", Meta.class);
+        // parameter type is String
+        headers.put("CamelFhir.theResourceName", "Patient");
+        headers.put(ExtraParameters.PREFER_RESPONSE_TYPE.getHeaderName(), Patient.class);
+
+        Meta result = requestBodyAndHeaders("direct://GET_FROM_TYPE", null, headers);
 
         LOG.debug("getFromType: " + result);
         assertNotNull("getFromType result", result);
