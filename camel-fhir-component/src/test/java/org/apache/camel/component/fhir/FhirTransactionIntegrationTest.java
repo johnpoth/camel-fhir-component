@@ -56,7 +56,7 @@ public class FhirTransactionIntegrationTest extends AbstractFhirTestSupport {
     @Test
     public void testWithResources() throws Exception {
         Patient oscar = new Patient().addName(new HumanName().addGiven("Oscar").setFamily("Peterson"));
-        Patient bobbyHebb      = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
+        Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         List<IBaseResource> patients = new ArrayList<>(2);
         patients.add(oscar);
         patients.add(bobbyHebb);
@@ -72,7 +72,7 @@ public class FhirTransactionIntegrationTest extends AbstractFhirTestSupport {
     @Test
     public void testWithResourcesSummaryEnum() throws Exception {
         Patient oscar = new Patient().addName(new HumanName().addGiven("Oscar").setFamily("Peterson"));
-        Patient bobbyHebb      = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
+        Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         List<IBaseResource> patients = new ArrayList<>(2);
         patients.add(oscar);
         patients.add(bobbyHebb);

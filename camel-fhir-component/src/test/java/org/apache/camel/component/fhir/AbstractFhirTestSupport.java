@@ -78,10 +78,11 @@ public class AbstractFhirTestSupport extends CamelTestSupport {
         FhirVersionEnum version = FhirVersionEnum.valueOf((String) options.get("fhirVersion"));
         this.fhirContext = new FhirContext(version);
         threadFhirContext.set(this.fhirContext);
-        this.fhirClient = this.fhirContext.newRestfulGenericClient((String) options.get("fhirBase"));
+        this.fhirClient = this.fhirContext.newRestfulGenericClient((String) options.get("url"));
         threadFhirClient.set(this.fhirClient);
         final FhirConfiguration configuration = new FhirConfiguration();
         IntrospectionSupport.setProperties(configuration, options);
+        configuration.setFhirContext(this.fhirContext);
 
         // add FhirComponent to Camel context
         final FhirComponent component = new FhirComponent(context);

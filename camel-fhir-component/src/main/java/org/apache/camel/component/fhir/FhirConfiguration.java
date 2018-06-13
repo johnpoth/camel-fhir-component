@@ -1,15 +1,13 @@
 package org.apache.camel.component.fhir;
 
-import java.util.List;
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.api.CacheControlDirective;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
+import org.apache.camel.component.fhir.internal.FhirApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Component configuration for FHIR component.
@@ -17,82 +15,40 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 @UriParams
 public class FhirConfiguration {
 
-   @UriParam
-   private String fhirBase;
+   @UriPath
+   @Metadata(required = "true")
+   private FhirApiName apiName;
+   @UriPath @Metadata(required = "true")
+   private String methodName;
 
-   @UriParam
-   private IGenericClient genericClient;
+   @UriParam(description = "The FHIR server base URL")
+   private String url;
 
-   @UriParam
-   private FhirContext fhirContext;
-
-   @UriParam
+   @UriParam(description ="The FHIR fhirVersion e.g 'DSTU3', 'R4'. See ca.uhn.fhir.context.FhirVersionEnum")
    private String fhirVersion;
 
-   @UriParam
-   @Metadata(description = "Sets the <code>Cache-Control</code> header value, which advises the server (or any cache in front of it) how to behave in terms of cached requests")
-   private CacheControlDirective cacheControlDirective;
+   @UriParam(description ="FhirContext is an expensive object to create. To avoid creating multiple instances,"
+           + " it can be set directly.")
+   private FhirContext fhirContext;
 
-   @UriParam
-   @Metadata(description ="Request that the server return subsetted resources, containing only the elements specified in the given parameters."
-           + " For example: <code>subsetElements(\"name\", \"identifier\")</code> requests that the server only return"
-           + " the \"name\" and \"identifier\" fields in the returned resource, and omit any others.")
-   private String[] subsetElements;
-
-   @UriParam
-   private EncodingEnum encodingEnum;
-
-   @UriParam
-   @Metadata(description = "Will encode the request to JSON")
-   private boolean encodeJson;
-
-   @UriParam
-   @Metadata(description = "Will encode the request to XML")
-   private boolean encodeXml;
-
-   @UriParam
-   @Metadata(description ="Explicitly specify a custom structure type to attempt to use when parsing the response. This"
-           + " is useful for invocations where the response is a Bundle/Parameters containing nested resources,"
-           + " and you want to use specific custom structures for those nested resources.")
-   private Class<? extends IBaseResource> preferredResponseType;
-
-   @UriParam
-   @Metadata(description ="Explicitly specify a list of custom structure types to attempt to use (in order from most to"
-           + " least preferred) when parsing the response. This"
-           + " is useful for invocations where the response is a Bundle/Parameters containing nested resources,"
-           + " and you want to use specific custom structures for those nested resources.")
-   private List<Class<? extends IBaseResource>> preferredResponseTypes;
-
-   @UriParam
-   @Metadata(description ="Pretty print the request")
+   @UriParam(description ="Pretty print all request")
    private boolean prettyPrint;
 
-   @UriParam
-   @Metadata(description ="Request that the server modify the response using the <code>_summary</code> param")
+   @UriParam(description ="Request that the server modify the response using the <code>_summary</code> param")
    private SummaryEnum summaryEnum;
 
-   public String getFhirBase() {
-      return fhirBase;
+   @UriParam(description ="Encoding to use for all request")
+   private EncodingEnum encodingEnum;
+
+   @UriParam(description ="Force conformance check")
+   private boolean forceConformanceCheck;
+
+   public String getUrl() {
+      return url;
    }
 
-   public void setFhirBase(String fhirBase) {
-      this.fhirBase = fhirBase;
-   }
-
-   public IGenericClient getGenericClient() {
-      return genericClient;
-   }
-
-   public void setGenericClient(IGenericClient genericClient) {
-      this.genericClient = genericClient;
-   }
-
-   public FhirContext getFhirContext() {
-      return fhirContext;
-   }
-
-   public void setFhirContext(FhirContext fhirContext) {
-      this.fhirContext = fhirContext;
+   public void setUrl(String url) {
+      this.url = url;
    }
 
    public String getFhirVersion() {
@@ -103,22 +59,6 @@ public class FhirConfiguration {
       this.fhirVersion = fhirVersion;
    }
 
-   public CacheControlDirective getCacheControlDirective() {
-      return cacheControlDirective;
-   }
-
-   public void setCacheControlDirective(CacheControlDirective cacheControlDirective) {
-      this.cacheControlDirective = cacheControlDirective;
-   }
-
-   public String[] getSubsetElements() {
-      return subsetElements;
-   }
-
-   public void setSubsetElements(String[] subsetElements) {
-      this.subsetElements = subsetElements;
-   }
-
    public EncodingEnum getEncodingEnum() {
       return encodingEnum;
    }
@@ -127,37 +67,6 @@ public class FhirConfiguration {
       this.encodingEnum = encodingEnum;
    }
 
-   public boolean isEncodeJson() {
-      return encodeJson;
-   }
-
-   public void setEncodeJson(boolean encodeJson) {
-      this.encodeJson = encodeJson;
-   }
-
-   public boolean isEncodeXml() {
-      return encodeXml;
-   }
-
-   public void setEncodeXml(boolean encodeXml) {
-      this.encodeXml = encodeXml;
-   }
-
-   public Class<? extends IBaseResource> getPreferredResponseType() {
-      return preferredResponseType;
-   }
-
-   public void setPreferredResponseType(Class<? extends IBaseResource> preferredResponseType) {
-      this.preferredResponseType = preferredResponseType;
-   }
-
-   public List<Class<? extends IBaseResource>> getPreferredResponseTypes() {
-      return preferredResponseTypes;
-   }
-
-   public void setPreferredResponseTypes(List<Class<? extends IBaseResource>> preferredResponseTypes) {
-      this.preferredResponseTypes = preferredResponseTypes;
-   }
 
    public boolean isPrettyPrint() {
       return prettyPrint;
@@ -173,5 +82,43 @@ public class FhirConfiguration {
 
    public void setSummaryEnum(SummaryEnum summaryEnum) {
       this.summaryEnum = summaryEnum;
+   }
+
+   public FhirApiName getApiName() {
+      return apiName;
+   }
+
+   /**
+    * What kind of operation to perform
+    */
+   public void setApiName(FhirApiName apiName) {
+      this.apiName = apiName;
+   }
+
+   public String getMethodName() {
+      return methodName;
+   }
+
+   /**
+    * What sub operation to use for the selected operation
+    */
+   public void setMethodName(String methodName) {
+      this.methodName = methodName;
+   }
+
+   public FhirContext getFhirContext() {
+      return fhirContext;
+   }
+
+   public void setFhirContext(FhirContext fhirContext) {
+      this.fhirContext = fhirContext;
+   }
+
+   public boolean isForceConformanceCheck() {
+      return forceConformanceCheck;
+   }
+
+   public void setForceConformanceCheck(boolean forceConformanceCheck) {
+      this.forceConformanceCheck = forceConformanceCheck;
    }
 }

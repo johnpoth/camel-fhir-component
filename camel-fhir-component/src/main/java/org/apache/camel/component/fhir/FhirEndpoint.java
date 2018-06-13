@@ -2,14 +2,10 @@ package org.apache.camel.component.fhir;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.api.FhirCapabilities;
 import org.apache.camel.component.fhir.api.FhirCreate;
@@ -24,17 +20,15 @@ import org.apache.camel.component.fhir.api.FhirSearch;
 import org.apache.camel.component.fhir.api.FhirTransaction;
 import org.apache.camel.component.fhir.api.FhirUpdate;
 import org.apache.camel.component.fhir.api.FhirValidate;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
-
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirApiName;
 import org.apache.camel.component.fhir.internal.FhirConstants;
 import org.apache.camel.component.fhir.internal.FhirPropertiesHelper;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.component.AbstractApiEndpoint;
+import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 /**
  * Represents a FHIR endpoint.
@@ -43,16 +37,17 @@ import org.apache.camel.component.fhir.internal.FhirPropertiesHelper;
              consumerClass = FhirConsumer.class, label = "api")
 public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration> {
 
-    @UriPath @Metadata(required = "true")
-    private String name;
+    private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";
 
     private Object apiProxy;
-    private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";
+
+    @UriParam
+    private FhirConfiguration configuration;
 
     public FhirEndpoint(String uri, FhirComponent component,
                         FhirApiName apiName, String methodName, FhirConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, FhirApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-
+        this.configuration = endpointConfiguration;
     }
 
     public Producer createProducer() throws Exception {
@@ -81,8 +76,7 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
 
     @Override
     protected void afterConfigureProperties() {
-        initRestClient();
-        IGenericClient client = getConfiguration().getGenericClient();
+        IGenericClient client = getClient();
         switch(apiName){
             case CAPABILITIES:
                 apiProxy = new FhirCapabilities(client);
@@ -141,6 +135,10 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
 
     }
 
+    private IGenericClient getClient() {
+        return ((FhirComponent)getComponent()).getClient(configuration);
+    }
+
     private Map<ExtraParameters, Object> getExtraParameters(Map<String, Object> properties) {
         Object extraParameters = properties.get(EXTRA_PARAMETERS_PROPERTY);
         if (extraParameters == null) {
@@ -149,34 +147,8 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
         return (Map<ExtraParameters, Object>) extraParameters;
     }
 
-    private void initRestClient() {
-        if (configuration.getGenericClient() == null) {
-            if (configuration.getFhirBase() == null) {
-                throw new RuntimeCamelException("FhirBase URL must be set!");
-            }
-            if (configuration.getFhirContext() == null) {
-                FhirVersionEnum version = FhirVersionEnum.valueOf(configuration.getFhirVersion());
-                configuration.setFhirContext(new FhirContext(version));
-            }
-            configuration.setGenericClient(configuration.getFhirContext().newRestfulGenericClient(configuration.getFhirBase()));
-        }
-    }
-
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         return apiProxy;
     }
-
-    /**
-     * Some description of this option, and what it does
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-
 }
