@@ -52,7 +52,7 @@ public class FhirCapabilitiesIntegrationTest extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for ofType
                 from("direct://OF_TYPE")
-                    .to("fhir://" + PATH_PREFIX + "/ofType?inBody=type");
+                    .to("fhir://" + PATH_PREFIX + "/ofType?inBody=type&log=true");
 
             }
         };

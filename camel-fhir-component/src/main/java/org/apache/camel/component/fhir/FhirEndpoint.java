@@ -135,7 +135,7 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
 
     }
 
-    private IGenericClient getClient() {
+    IGenericClient getClient() {
         return ((FhirComponent)getComponent()).getClient(configuration);
     }
 

@@ -4,7 +4,12 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
+import ca.uhn.fhir.rest.client.apache.GZipContentInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
+import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
+import ca.uhn.fhir.rest.client.interceptor.CookieInterceptor;
+import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
@@ -63,15 +68,35 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
         FhirContext fhirContext = getFhirContext(endpointConfiguration);
         IGenericClient genericClient = fhirContext.newRestfulGenericClient(endpointConfiguration.getUrl());
         genericClient.setPrettyPrint(endpointConfiguration.isPrettyPrint());
-        EncodingEnum encodingEnum = endpointConfiguration.getEncodingEnum();
-        SummaryEnum summaryEnum = endpointConfiguration.getSummaryEnum();
-        if (encodingEnum != null)
-            genericClient.setEncoding(encodingEnum);
-        if (summaryEnum != null)
-            genericClient.setSummary(summaryEnum);
+        String encoding = endpointConfiguration.getEncoding();
+        String summary = endpointConfiguration.getSummary();
+
+        if (encoding != null)
+            genericClient.setEncoding(EncodingEnum.valueOf(encoding));
+        if (summary != null)
+            genericClient.setSummary(SummaryEnum.valueOf(summary));
         if (endpointConfiguration.isForceConformanceCheck())
             genericClient.forceConformanceCheck();
+
+        registerClientInterceptors(genericClient, endpointConfiguration);
         return genericClient;
+    }
+
+    private void registerClientInterceptors(IGenericClient genericClient, FhirConfiguration endpointConfiguration) {
+        String username = endpointConfiguration.getUsername();
+        String password = endpointConfiguration.getPassword();
+        String accessToken = endpointConfiguration.getAccessToken();
+        String sessionCookie = endpointConfiguration.getSessionCookie();
+        if (username != null)
+            genericClient.registerInterceptor(new BasicAuthInterceptor(username, password));
+        if (accessToken != null)
+            genericClient.registerInterceptor(new BearerTokenAuthInterceptor(accessToken));
+        if (endpointConfiguration.isLog())
+            genericClient.registerInterceptor(new LoggingInterceptor(true));
+        if (endpointConfiguration.isCompress())
+            genericClient.registerInterceptor(new GZipContentInterceptor());
+        if (sessionCookie != null)
+            genericClient.registerInterceptor(new CookieInterceptor(sessionCookie));
     }
 
     private FhirContext getFhirContext(FhirConfiguration endpointConfiguration) {

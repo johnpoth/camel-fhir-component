@@ -72,7 +72,7 @@ public class FhirCreateIntegrationTest extends AbstractFhirTestSupport {
 
                 // test route for resource
                 from("direct://RESOURCE_STRING")
-                    .to("fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString");
+                    .to("fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&log=true");
 
             }
         };
