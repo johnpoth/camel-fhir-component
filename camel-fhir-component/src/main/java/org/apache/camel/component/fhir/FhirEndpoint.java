@@ -49,8 +49,8 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a FHIR endpoint.
  */
-@UriEndpoint(firstVersion = "1.0-SNAPSHOT", scheme = "fhir", title = "FHIR", syntax="fhir:apiName/methodName",
-             consumerClass = FhirConsumer.class, label = "api")
+@UriEndpoint(firstVersion = "1.0-SNAPSHOT", scheme = "fhir", title = "FHIR", syntax = "fhir:apiName/methodName",
+        consumerClass = FhirConsumer.class, label = "api")
 public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration> {
 
     private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";
@@ -93,48 +93,48 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
     @Override
     protected void afterConfigureProperties() {
         IGenericClient client = getClient();
-        switch(apiName){
-            case CAPABILITIES:
-                apiProxy = new FhirCapabilities(client);
-                break;
-            case CREATE:
-                apiProxy = new FhirCreate(client);
-                break;
-            case DELETE:
-                apiProxy = new FhirDelete(client);
-                break;
-            case HISTORY:
-                apiProxy = new FhirHistory(client);
-                break;
-            case LOAD_PAGE:
-                apiProxy = new FhirLoadPage(client);
-                break;
-            case META:
-                apiProxy = new FhirMeta(client);
-                break;
-            case OPERATION:
-                apiProxy = new FhirOperation(client);
-                break;
-            case PATCH:
-                apiProxy = new FhirPatch(client);
-                break;
-            case READ:
-                apiProxy = new FhirRead(client);
-                break;
-            case SEARCH:
-                apiProxy = new FhirSearch(client);
-                break;
-            case TRANSACTION:
-                apiProxy = new FhirTransaction(client);
-                break;
-            case UPDATE:
-                apiProxy = new FhirUpdate(client);
-                break;
-            case VALIDATE:
-                apiProxy = new FhirValidate(client);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid API name " + apiName);
+        switch (apiName) {
+        case CAPABILITIES:
+            apiProxy = new FhirCapabilities(client);
+            break;
+        case CREATE:
+            apiProxy = new FhirCreate(client);
+            break;
+        case DELETE:
+            apiProxy = new FhirDelete(client);
+            break;
+        case HISTORY:
+            apiProxy = new FhirHistory(client);
+            break;
+        case LOAD_PAGE:
+            apiProxy = new FhirLoadPage(client);
+            break;
+        case META:
+            apiProxy = new FhirMeta(client);
+            break;
+        case OPERATION:
+            apiProxy = new FhirOperation(client);
+            break;
+        case PATCH:
+            apiProxy = new FhirPatch(client);
+            break;
+        case READ:
+            apiProxy = new FhirRead(client);
+            break;
+        case SEARCH:
+            apiProxy = new FhirSearch(client);
+            break;
+        case TRANSACTION:
+            apiProxy = new FhirTransaction(client);
+            break;
+        case UPDATE:
+            apiProxy = new FhirUpdate(client);
+            break;
+        case VALIDATE:
+            apiProxy = new FhirValidate(client);
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
 
@@ -152,7 +152,7 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
     }
 
     IGenericClient getClient() {
-        return ((FhirComponent)getComponent()).getClient(configuration);
+        return ((FhirComponent) getComponent()).getClient(configuration);
     }
 
     private Map<ExtraParameters, Object> getExtraParameters(Map<String, Object> properties) {

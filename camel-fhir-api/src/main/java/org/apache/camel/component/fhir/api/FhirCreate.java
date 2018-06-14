@@ -73,10 +73,11 @@ public class FhirCreate {
     }
 
     private void processOptionalParams(String theSearchUrl, PreferReturnEnum theReturn, ICreateTyped createTyped) {
-        if (theSearchUrl != null)
+        if (theSearchUrl != null) {
             createTyped.conditionalByUrl(theSearchUrl);
-
-        if (theReturn != null)
+        }
+        if (theReturn != null) {
             createTyped.prefer(theReturn);
+        }
     }
 }

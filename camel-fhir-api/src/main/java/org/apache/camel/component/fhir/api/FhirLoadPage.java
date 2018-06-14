@@ -29,7 +29,7 @@ public class FhirLoadPage {
     private final IGenericClient client;
 
     public FhirLoadPage(IGenericClient client) {
-       this.client = client;
+        this.client = client;
     }
 
     /**

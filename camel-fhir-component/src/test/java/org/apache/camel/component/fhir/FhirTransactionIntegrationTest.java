@@ -78,7 +78,7 @@ public class FhirTransactionIntegrationTest extends AbstractFhirTestSupport {
 
         assertNotNull("withResources result", result);
         LOG.debug("withResources: " + result);
-        assertTrue(result.size() == 2 );
+        assertTrue(result.size() == 2);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class FhirTransactionIntegrationTest extends AbstractFhirTestSupport {
 
         assertNotNull("withResources result", result);
         LOG.debug("withResources: " + result);
-        assertTrue(result.size() == 2 );
+        assertTrue(result.size() == 2);
     }
 
     @Override

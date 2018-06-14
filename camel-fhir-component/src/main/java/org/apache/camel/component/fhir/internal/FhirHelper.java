@@ -39,102 +39,120 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class for creating FHIR {@link ca.uhn.fhir.rest.client.api.IGenericClient}
  */
-public class FhirHelper {
+public final class FhirHelper {
 
-   private static final Logger LOG = LoggerFactory.getLogger(FhirHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FhirHelper.class);
 
-   private FhirHelper() {
-      // hide utility class constructor
-   }
+    private FhirHelper() {
+        // hide utility class constructor
+    }
 
-   public static IGenericClient createClient(FhirConfiguration endpointConfiguration, CamelContext camelContext) {
-      if (endpointConfiguration.getClient() != null)
-         return endpointConfiguration.getClient();
-      FhirContext fhirContext = getFhirContext(endpointConfiguration);
-      if (endpointConfiguration.isDeferModelScanning()) {
-         fhirContext.setPerformanceOptions(PerformanceOptionsEnum.DEFERRED_MODEL_SCANNING);
-      }
-      if (endpointConfiguration.getClientFactory() != null)
-         fhirContext.setRestfulClientFactory(endpointConfiguration.getClientFactory());
+    public static IGenericClient createClient(FhirConfiguration endpointConfiguration, CamelContext camelContext) {
+        if (endpointConfiguration.getClient() != null) {
+            return endpointConfiguration.getClient();
+        }
+        FhirContext fhirContext = getFhirContext(endpointConfiguration);
+        if (endpointConfiguration.isDeferModelScanning()) {
+            fhirContext.setPerformanceOptions(PerformanceOptionsEnum.DEFERRED_MODEL_SCANNING);
+        }
+        if (endpointConfiguration.getClientFactory() != null) {
+            fhirContext.setRestfulClientFactory(endpointConfiguration.getClientFactory());
+        }
 
-      IRestfulClientFactory restfulClientFactory = fhirContext.getRestfulClientFactory();
-      configureClientFactory(endpointConfiguration, restfulClientFactory, camelContext);
-      IGenericClient genericClient = fhirContext.newRestfulGenericClient(endpointConfiguration.getServerUrl());
-      genericClient.setPrettyPrint(endpointConfiguration.isPrettyPrint());
-      EncodingEnum encoding = endpointConfiguration.getEncoding();
-      SummaryEnum summary = endpointConfiguration.getSummary();
+        IRestfulClientFactory restfulClientFactory = fhirContext.getRestfulClientFactory();
+        configureClientFactory(endpointConfiguration, restfulClientFactory, camelContext);
+        IGenericClient genericClient = fhirContext.newRestfulGenericClient(endpointConfiguration.getServerUrl());
+        genericClient.setPrettyPrint(endpointConfiguration.isPrettyPrint());
+        EncodingEnum encoding = endpointConfiguration.getEncoding();
+        SummaryEnum summary = endpointConfiguration.getSummary();
 
-      if (encoding != null)
-         genericClient.setEncoding(encoding);
-      if (summary != null)
-         genericClient.setSummary(summary);
-      if (endpointConfiguration.isForceConformanceCheck())
-         genericClient.forceConformanceCheck();
+        if (encoding != null) {
+            genericClient.setEncoding(encoding);
+        }
+        if (summary != null) {
+            genericClient.setSummary(summary);
+        }
+        if (endpointConfiguration.isForceConformanceCheck()) {
+            genericClient.forceConformanceCheck();
+        }
 
-      registerClientInterceptors(genericClient, endpointConfiguration);
-      return genericClient;
-   }
+        registerClientInterceptors(genericClient, endpointConfiguration);
+        return genericClient;
+    }
 
-   private static void configureClientFactory(FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
-      Integer connectionTimeout = endpointConfiguration.getConnectionTimeout();
-      Integer socketTimeout = endpointConfiguration.getSocketTimeout();
+    private static void configureClientFactory(FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
+        Integer connectionTimeout = endpointConfiguration.getConnectionTimeout();
+        Integer socketTimeout = endpointConfiguration.getSocketTimeout();
 
-      if (ObjectHelper.isNotEmpty(connectionTimeout))
-         restfulClientFactory.setConnectTimeout(connectionTimeout);
-      if (ObjectHelper.isNotEmpty(socketTimeout))
-         restfulClientFactory.setSocketTimeout(socketTimeout);
+        if (ObjectHelper.isNotEmpty(connectionTimeout)) {
+            restfulClientFactory.setConnectTimeout(connectionTimeout);
+        }
+        if (ObjectHelper.isNotEmpty(socketTimeout)) {
+            restfulClientFactory.setSocketTimeout(socketTimeout);
+        }
 
-      configureProxy(endpointConfiguration, restfulClientFactory, camelContext);
-   }
+        configureProxy(endpointConfiguration, restfulClientFactory, camelContext);
+    }
 
-   private static void configureProxy(FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
-      ServerValidationModeEnum validationMode = endpointConfiguration.getValidationMode();
-      String proxyHost = endpointConfiguration.getProxyHost();
-      Integer proxyPort = endpointConfiguration.getProxyPort();
-      String proxyUser = endpointConfiguration.getProxyUser();
-      String proxyPassword = endpointConfiguration.getProxyPassword();
+    private static void configureProxy(FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
+        ServerValidationModeEnum validationMode = endpointConfiguration.getValidationMode();
+        String proxyHost = endpointConfiguration.getProxyHost();
+        Integer proxyPort = endpointConfiguration.getProxyPort();
+        String proxyUser = endpointConfiguration.getProxyUser();
+        String proxyPassword = endpointConfiguration.getProxyPassword();
 
-      String camelProxyHost = camelContext.getGlobalOption("http.proxyHost");
-      String camelProxyPort = camelContext.getGlobalOption("http.proxyPort");
+        String camelProxyHost = camelContext.getGlobalOption("http.proxyHost");
+        String camelProxyPort = camelContext.getGlobalOption("http.proxyPort");
 
-      if (ObjectHelper.isNotEmpty(camelProxyHost) && ObjectHelper.isNotEmpty(camelProxyPort))
-         restfulClientFactory.setProxy(camelProxyHost, Integer.parseInt(camelProxyPort));
-      if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort))
-         restfulClientFactory.setProxy(proxyHost, proxyPort);
-      if (ObjectHelper.isNotEmpty(proxyUser))
-         restfulClientFactory.setProxyCredentials(proxyUser, proxyPassword);
-      if (ObjectHelper.isNotEmpty(validationMode))
-         restfulClientFactory.setServerValidationMode(validationMode);
-   }
+        if (ObjectHelper.isNotEmpty(camelProxyHost) && ObjectHelper.isNotEmpty(camelProxyPort)) {
+            restfulClientFactory.setProxy(camelProxyHost, Integer.parseInt(camelProxyPort));
+        }
+        if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort)) {
+            restfulClientFactory.setProxy(proxyHost, proxyPort);
+        }
+        if (ObjectHelper.isNotEmpty(proxyUser)) {
+            restfulClientFactory.setProxyCredentials(proxyUser, proxyPassword);
+        }
+        if (ObjectHelper.isNotEmpty(validationMode)) {
+            restfulClientFactory.setServerValidationMode(validationMode);
+        }
+    }
 
-   private static void registerClientInterceptors(IGenericClient genericClient, FhirConfiguration endpointConfiguration) {
-      String username = endpointConfiguration.getUsername();
-      String password = endpointConfiguration.getPassword();
-      String accessToken = endpointConfiguration.getAccessToken();
-      String sessionCookie = endpointConfiguration.getSessionCookie();
-      if (username != null)
-         genericClient.registerInterceptor(new BasicAuthInterceptor(username, password));
-      if (accessToken != null)
-         genericClient.registerInterceptor(new BearerTokenAuthInterceptor(accessToken));
-      if (endpointConfiguration.isLog())
-         genericClient.registerInterceptor(new LoggingInterceptor(true));
-      if (endpointConfiguration.isCompress())
-         genericClient.registerInterceptor(new GZipContentInterceptor());
-      if (sessionCookie != null)
-         genericClient.registerInterceptor(new CookieInterceptor(sessionCookie));
-   }
+    private static void registerClientInterceptors(IGenericClient genericClient, FhirConfiguration endpointConfiguration) {
+        String username = endpointConfiguration.getUsername();
+        String password = endpointConfiguration.getPassword();
+        String accessToken = endpointConfiguration.getAccessToken();
+        String sessionCookie = endpointConfiguration.getSessionCookie();
+        if (username != null) {
+            genericClient.registerInterceptor(new BasicAuthInterceptor(username, password));
+        }
+        if (accessToken != null) {
+            genericClient.registerInterceptor(new BearerTokenAuthInterceptor(accessToken));
+        }
+        if (endpointConfiguration.isLog()) {
+            genericClient.registerInterceptor(new LoggingInterceptor(true));
+        }
+        if (endpointConfiguration.isCompress()) {
+            genericClient.registerInterceptor(new GZipContentInterceptor());
+        }
+        if (sessionCookie != null) {
+            genericClient.registerInterceptor(new CookieInterceptor(sessionCookie));
+        }
+    }
 
-   private static FhirContext getFhirContext(FhirConfiguration endpointConfiguration) {
-      FhirContext context = endpointConfiguration.getFhirContext();
-      if (context != null)
-         return context;
-      if (endpointConfiguration.getServerUrl() == null)
-         throw new RuntimeCamelException("The FHIR URL must be set!");
-      FhirVersionEnum fhirVersion = endpointConfiguration.getFhirVersion();
-      if (fhirVersion == null) {
-         LOG.debug("FHIR version is not set, default to DSTU3");
-         fhirVersion = FhirVersionEnum.DSTU3;
-      }
-      return new FhirContext(fhirVersion);
-   }
+    private static FhirContext getFhirContext(FhirConfiguration endpointConfiguration) {
+        FhirContext context = endpointConfiguration.getFhirContext();
+        if (context != null) {
+            return context;
+        }
+        if (endpointConfiguration.getServerUrl() == null) {
+            throw new RuntimeCamelException("The FHIR URL must be set!");
+        }
+        FhirVersionEnum fhirVersion = endpointConfiguration.getFhirVersion();
+        if (fhirVersion == null) {
+            LOG.debug("FHIR version is not set, default to DSTU3");
+            fhirVersion = FhirVersionEnum.DSTU3;
+        }
+        return new FhirContext(fhirVersion);
+    }
 }

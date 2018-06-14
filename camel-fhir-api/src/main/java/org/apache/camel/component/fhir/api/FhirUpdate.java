@@ -35,37 +35,37 @@ public class FhirUpdate {
         this.client = client;
     }
 
-    public MethodOutcome resource(IBaseResource resource, IIdType id, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters){
+    public MethodOutcome resource(IBaseResource resource, IIdType id, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateExecutable updateExecutable = client.update().resource(resource).withId(id);
         ExtraParameters.process(extraParameters, updateExecutable);
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
-    public MethodOutcome resource(String resourceAsString, IIdType id, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters){
+    public MethodOutcome resource(String resourceAsString, IIdType id, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateExecutable updateExecutable = client.update().resource(resourceAsString).withId(id);
         ExtraParameters.process(extraParameters, updateExecutable);
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
-    public MethodOutcome resource(IBaseResource resource, String stringId, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters){
+    public MethodOutcome resource(IBaseResource resource, String stringId, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateExecutable updateExecutable = client.update().resource(resource).withId(stringId);
         ExtraParameters.process(extraParameters, updateExecutable);
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
-    public MethodOutcome resource(String resourceAsString, String stringId, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters){
+    public MethodOutcome resource(String resourceAsString, String stringId, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateExecutable updateExecutable = client.update().resource(resourceAsString).withId(stringId);
         ExtraParameters.process(extraParameters, updateExecutable);
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
-    public MethodOutcome resourceBySearchUrl(IBaseResource resource, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters){
+    public MethodOutcome resourceBySearchUrl(IBaseResource resource, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateExecutable updateExecutable = client.update().resource(resource).conditionalByUrl(url);
         ExtraParameters.process(extraParameters, updateExecutable);
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
-    public MethodOutcome resourceBySearchUrl(String resourceAsString, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters){
+    public MethodOutcome resourceBySearchUrl(String resourceAsString, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateExecutable updateExecutable = client.update().resource(resourceAsString).conditionalByUrl(url);
         ExtraParameters.process(extraParameters, updateExecutable);
         return processOptionalParam(preferReturn, updateExecutable);

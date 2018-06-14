@@ -50,8 +50,9 @@ public class FhirPatch {
      */
     public MethodOutcome patchByUrl(String patchBody, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).conditionalByUrl(url);
-        if (preferReturn != null)
+        if (preferReturn != null) {
             patchExecutable.prefer(preferReturn);
+        }
         ExtraParameters.process(extraParameters, patchExecutable);
         return patchExecutable.execute();
     }
@@ -69,8 +70,9 @@ public class FhirPatch {
      */
     public MethodOutcome patchById(String patchBody, IIdType id, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).withId(id);
-        if (preferReturn != null)
+        if (preferReturn != null) {
             patchExecutable.prefer(preferReturn);
+        }
         ExtraParameters.process(extraParameters, patchExecutable);
         return patchExecutable.execute();
     }
@@ -88,8 +90,9 @@ public class FhirPatch {
      */
     public MethodOutcome patchById(String patchBody, String stringId, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IPatchExecutable patchExecutable = client.patch().withBody(patchBody).withId(stringId);
-        if (preferReturn != null)
+        if (preferReturn != null) {
             patchExecutable.prefer(preferReturn);
+        }
         ExtraParameters.process(extraParameters, patchExecutable);
         return patchExecutable.execute();
     }

@@ -91,7 +91,7 @@ public class FhirPatchIntegrationTest extends AbstractFhirTestSupport {
     }
 
     @Test
-    @Ignore(value="https://github.com/jamesagnew/hapi-fhir/issues/955")
+    @Ignore(value = "https://github.com/jamesagnew/hapi-fhir/issues/955")
     public void testPatchByUrl() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String

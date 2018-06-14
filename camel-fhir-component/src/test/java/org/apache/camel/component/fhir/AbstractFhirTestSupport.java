@@ -39,11 +39,11 @@ import org.junit.Before;
 public class AbstractFhirTestSupport extends CamelTestSupport {
 
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
-    private static final ThreadLocal<FhirContext> threadFhirContext =  new ThreadLocal<>();
-    private static final ThreadLocal<IGenericClient> threadFhirClient = new ThreadLocal<>();
+    private static final ThreadLocal<FhirContext> FHIR_CONTEXT_THREAD_LOCAL =  new ThreadLocal<>();
+    private static final ThreadLocal<IGenericClient> GENERIC_CLIENT_THREAD_LOCAL = new ThreadLocal<>();
+    protected Patient patient;
     FhirContext fhirContext;
     IGenericClient fhirClient;
-    protected Patient patient;
 
     @Before
     public void cleanFhirServerState() {
@@ -62,11 +62,11 @@ public class AbstractFhirTestSupport extends CamelTestSupport {
         }
     }
 
-    private void deletePatient(){
+    private void deletePatient() {
         fhirClient.delete().resourceConditionalByUrl("Patient?given=Vincent&family=Freeman").execute();
     }
 
-    private void createPatient(){
+    private void createPatient() {
         this.patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman")).setActive(false);
         this.patient.setId(fhirClient.create().resource(patient).execute().getId());
     }
@@ -93,9 +93,9 @@ public class AbstractFhirTestSupport extends CamelTestSupport {
 
         FhirVersionEnum version = FhirVersionEnum.valueOf((String) options.get("fhirVersion"));
         this.fhirContext = new FhirContext(version);
-        threadFhirContext.set(this.fhirContext);
+        FHIR_CONTEXT_THREAD_LOCAL.set(this.fhirContext);
         this.fhirClient = this.fhirContext.newRestfulGenericClient((String) options.get("serverUrl"));
-        threadFhirClient.set(this.fhirClient);
+        GENERIC_CLIENT_THREAD_LOCAL.set(this.fhirClient);
         final FhirConfiguration configuration = new FhirConfiguration();
         IntrospectionSupport.setProperties(configuration, options);
         configuration.setFhirContext(this.fhirContext);
@@ -110,11 +110,11 @@ public class AbstractFhirTestSupport extends CamelTestSupport {
     @Override
     protected void postProcessTest() throws Exception {
         super.postProcessTest();
-        this.fhirContext = threadFhirContext.get();
-        this.fhirClient = threadFhirClient.get();
+        this.fhirContext = FHIR_CONTEXT_THREAD_LOCAL.get();
+        this.fhirClient = GENERIC_CLIENT_THREAD_LOCAL.get();
     }
 
-        @Override
+    @Override
     public boolean isCreateCamelContextPerClass() {
         // only create the context once for this class
         return true;

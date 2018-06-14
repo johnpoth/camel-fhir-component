@@ -37,7 +37,7 @@ public class FhirHistory {
     }
 
     /**
- 	 * Perform the operation across all versions of all resources of all types on the server
+     * Perform the operation across all versions of all resources of all types on the server
      *
      * @param returnType Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle</code>).
      *                Use this method if you are accessing a DSTU2+ server.
@@ -55,7 +55,7 @@ public class FhirHistory {
     }
 
     /**
-	 * Perform the operation across all versions of all resources of the given type on the server
+     * Perform the operation across all versions of all resources of the given type on the server
      *
      * @param resourceType The resource type to search for
      * @param returnType Request that the method return a Bundle resource (such as <code>ca.uhn.fhir.model.dstu2.resource.Bundle</code>).
@@ -66,7 +66,8 @@ public class FhirHistory {
      * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @return the {@link IBaseBundle}
      */
-    public <T extends IBaseBundle> T onType(Class<IBaseResource> resourceType, Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff, Map<ExtraParameters, Object> extraParameters) {
+    public <T extends IBaseBundle> T onType(Class<IBaseResource> resourceType, Class<T> returnType, Integer count, Date cutoff,
+                                            IPrimitiveType<Date> iCutoff, Map<ExtraParameters, Object> extraParameters) {
         IHistoryTyped<T> tiHistoryTyped = client.history().onType(resourceType).andReturnBundle(returnType);
         processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
         ExtraParameters.process(extraParameters, tiHistoryTyped);
@@ -95,14 +96,15 @@ public class FhirHistory {
     }
 
     private <T extends IBaseBundle> void processOptionalParams(Integer count, Date theCutoff, IPrimitiveType<Date> cutoff, IHistoryTyped<T> tiHistoryTyped) {
-        if (count != null)
+        if (count != null) {
             tiHistoryTyped.count(count);
-
-        if (theCutoff != null)
+        }
+        if (theCutoff != null) {
             tiHistoryTyped.since(theCutoff);
-
-        if (cutoff != null)
+        }
+        if (cutoff != null) {
             tiHistoryTyped.since(cutoff);
+        }
     }
 
 }
