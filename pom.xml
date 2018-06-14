@@ -34,7 +34,53 @@
     </dependencies>
   </dependencyManagement>
 
+
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.0.0</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.camel</groupId>
+              <artifactId>camel-buildtools</artifactId>
+              <version>${camelVersion}</version>
+            </dependency>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>7.6.1</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <id>default-cli</id>
+              <phase>validate</phase>
+              <configuration>
+                <includeResources>false</includeResources>
+                <configLocation>camel-checkstyle.xml</configLocation>
+                <consoleOutput>true</consoleOutput>
+                <linkXRef>false</linkXRef>
+                <suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
+                <encoding>UTF-8</encoding>
+                <failsOnError>true</failsOnError>
+                <sourceDirectories>
+                  <sourceDirectory>${basedir}/src</sourceDirectory>
+                </sourceDirectories>
+                <headerLocation>header-java.txt</headerLocation>
+                <includes>**/*.java,**/*.groovy,**/*.scala,**/*.properties,**/*.xml,**/*.xsd</includes>
+                <excludes>**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java</excludes>
+              </configuration>
+              <goals>
+                <goal>checkstyle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -45,7 +91,10 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
-
 </project>

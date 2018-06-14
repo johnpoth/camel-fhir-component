@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirOperation} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class FhirOperationIntegrationTest extends AbstractFhirTestSupport {

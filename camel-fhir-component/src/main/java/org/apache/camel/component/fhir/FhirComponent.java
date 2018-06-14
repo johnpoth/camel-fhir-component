@@ -16,7 +16,6 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
 
     @Metadata(label = "advanced")
     private IGenericClient client;
-    // TODO: allow to inject client factory, FhirContext?
 
     public FhirComponent() {
         super(FhirEndpoint.class, FhirApiName.class, FhirApiCollection.getCollection());
