@@ -25,14 +25,28 @@ public class FhirConfigurationTest extends AbstractFhirTestSupport {
 
     private static final String TEST_URI = "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&log=true&"
             + "encoding=JSON&summary=TEXT&compress=true&username=art&password=tatum&sessionCookie=mycookie%3DChips%20Ahoy"
-            + "&accessToken=token&url=http://localhost:8080/hapi-fhir-jpaserver-example/baseDstu3&fhirVersion=DSTU3";
+            + "&accessToken=token&serverUrl=http://localhost:8080/hapi-fhir-jpaserver-example/baseDstu3&fhirVersion=DSTU3";
+    private FhirConfiguration componentConfiguration;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = new DefaultCamelContext(createRegistry());
 
-        // add FhirComponent to Camel context but don't set up configuration
+        // add FhirComponent to Camel context but don't set up componentConfiguration
         final FhirComponent component = new FhirComponent(context);
+        FhirConfiguration fhirConfiguration = new FhirConfiguration();
+        fhirConfiguration.setLog(true);
+        fhirConfiguration.setEncoding("JSON");
+        fhirConfiguration.setSummary("TEXT");
+        fhirConfiguration.setCompress(true);
+        fhirConfiguration.setUsername("art");
+        fhirConfiguration.setPassword("tatum");
+        fhirConfiguration.setSessionCookie("mycookie=Chips Ahoy");
+        fhirConfiguration.setAccessToken("token");
+        fhirConfiguration.setServerUrl("http://localhost:8080/hapi-fhir-jpaserver-example/baseDstu3");
+        fhirConfiguration.setFhirVersion("DSTU3");
+        component.setConfiguration(fhirConfiguration);
+        this.componentConfiguration = fhirConfiguration;
         context.addComponent("fhir", component);
 
         return context;
@@ -42,6 +56,8 @@ public class FhirConfigurationTest extends AbstractFhirTestSupport {
     public void testConfiguration() throws Exception {
         FhirEndpoint endpoint = getMandatoryEndpoint(TEST_URI, FhirEndpoint.class);
         GenericClient client = (GenericClient) endpoint.getClient();
+        FhirConfiguration configuration = endpoint.getConfiguration();
+        assertEquals(this.componentConfiguration, configuration);
         assertEquals("http://localhost:8080/hapi-fhir-jpaserver-example/baseDstu3", client.getUrlBase());
         assertEquals(EncodingEnum.JSON, client.getEncoding());
         assertEquals(SummaryEnum.TEXT, client.getSummary());
